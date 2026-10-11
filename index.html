@@ -104,7 +104,7 @@ h1,h2,h3{font-family:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;margi
 .empty{color:var(--muted);padding:14px 0;margin:0;border-bottom:1px solid var(--line);font-size:15px}
 
 /* Empty placeholder rows: blank lines you can type into */
-.row.ph form{display:flex;align-items:center;gap:4px;width:100%}
+.row.ph .phf{display:flex;align-items:center;gap:4px;width:100%}
 .ph .pc{flex:none;width:46px;height:46px;display:grid;place-items:center;color:var(--muted);opacity:.35;margin-left:-10px}
 .ph .pc svg{width:26px;height:26px}
 .ph input{flex:1;min-width:0;background:transparent;border:0;font-size:17px;padding:12px 0;min-height:46px}
@@ -112,7 +112,7 @@ h1,h2,h3{font-family:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;margi
 .ph input:focus-visible{outline:none}
 .ph:focus-within{border-bottom-color:var(--accent);box-shadow:0 1px 0 var(--accent)}
 .ph .padd{display:none;flex:none;border:0;background:var(--ink);color:var(--bg);border-radius:999px;padding:7px 14px;font-weight:600;font-size:13px;cursor:pointer;min-height:34px}
-.ph:focus-within .padd{display:inline-block}
+.ph:focus-within .padd,.ph input:not(:placeholder-shown)~.padd{display:inline-block}
 
 /* Lists overview: every list visible, two columns */
 .lgrid{column-count:2;column-gap:28px}
@@ -304,9 +304,9 @@ function row(i,showCat){
     '<button type="button" class="x" data-action="remove" data-id="'+i.id+'" aria-label="Delete: '+esc(i.text)+'">'+ICON.x+'</button></li>';
 }
 function phRow(c,k){
-  return '<li class="row ph"><form class="phf" data-fixed="'+c.id+'"><span class="pc" aria-hidden="true">'+ICON.todo+'</span>'+
+  return '<li class="row ph"><div class="phf" data-fixed="'+c.id+'"><span class="pc" aria-hidden="true">'+ICON.todo+'</span>'+
     '<input id="ph-'+c.id+'-'+k+'" type="text" placeholder="Add item" aria-label="Add item to '+esc(c.name)+'" autocomplete="off" maxlength="120">'+
-    '<button type="submit" class="padd">Add</button></form></li>';
+    '<button type="button" class="padd" data-action="add">Add</button></div></li>';
 }
 /* filled items, then empty placeholder lines up to five (always at least one to type into) */
 function listBody(c,items){
@@ -324,9 +324,9 @@ function sections(items,showCat){
 }
 function addForm(defCat){
   var sel='<label class="sr" for="add-cat">List</label><select id="add-cat">'+CATS.map(function(c){return '<option value="'+c.id+'"'+(c.id===defCat?' selected':'')+'>'+esc(c.name)+'</option>';}).join('')+'</select>';
-  return '<form class="add">'+ICON.plus+'<label class="sr" for="add-text">New item</label>'+
+  return '<div class="add">'+ICON.plus+'<label class="sr" for="add-text">New item</label>'+
     '<input id="add-text" type="text" placeholder="Add something to do" autocomplete="off" maxlength="120" required>'+sel+
-    '<button type="submit">Add</button></form>';
+    '<button type="button" data-action="add">Add</button></div>';
 }
 function chip(id,label,h){
   var on=state.filter===id;
@@ -394,6 +394,7 @@ function render(){
 document.addEventListener('click',function(e){
   var t=e.target.closest&&e.target.closest('[data-action]');if(!t)return;
   var a=t.getAttribute('data-action'),id=t.getAttribute('data-id');
+  if(a==='add'){submitAdd(t.closest('.phf, .add'));return;}
   if(a==='nav'){state.view=t.getAttribute('data-view');state.cat=null;window.scrollTo(0,0);}
   else if(a==='open'){state.view='list';state.cat=t.getAttribute('data-cat');window.scrollTo(0,0);}
   else if(a==='filter'){state.filter=t.getAttribute('data-cat');}
@@ -404,18 +405,30 @@ document.addEventListener('click',function(e){
   else if(a==='shuffle'){shuffle();}
   render();
 });
-document.addEventListener('submit',function(e){
-  var f=e.target.closest&&e.target.closest('form.add, form.phf');if(!f)return;
-  e.preventDefault();
-  var inp=f.querySelector('input[type=text]');
-  var txt=inp.value;
-  if(!txt.trim())return;
-  var isPh=f.classList.contains('phf');
-  var sel=f.querySelector('#add-cat');
-  var cat=isPh?f.getAttribute('data-fixed'):(sel?sel.value:state.lastCat);
-  addItem(cat,txt,state.view==='home');
+function submitAdd(box){
+  if(!box)return;
+  var inp=box.querySelector('input[type=text]');
+  if(!inp||!inp.value.trim())return;
+  var isPh=box.classList.contains('phf');
+  var sel=box.querySelector('#add-cat');
+  var cat=isPh?box.getAttribute('data-fixed'):(sel?sel.value:state.lastCat);
+  addItem(cat,inp.value,state.view==='home');
   state.refocus=isPh?'ph-'+cat+'-0':inp.id;
   render();
+}
+document.addEventListener('keydown',function(e){
+  if(e.key!=='Enter'||e.isComposing)return;
+  var t=e.target;
+  if(!t||t.tagName!=='INPUT')return;
+  var box=t.closest('.phf, .add');
+  if(!box)return;
+  e.preventDefault();
+  submitAdd(box);
+});
+/* keep the input focused while tapping Add (stops the keyboard flicker on phones) */
+document.addEventListener('mousedown',function(e){
+  var b=e.target.closest&&e.target.closest('[data-action="add"]');
+  if(b)e.preventDefault();
 });
 
 render();
