@@ -4,16 +4,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Next Up</title>
-<meta name="description" content="Never waste free time again. A simple to-do list of things worth doing.">
-<link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#F5F6FB" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0E1122" media="(prefers-color-scheme: dark)">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Next Up">
-<link rel="icon" type="image/png" href="icon-192.png">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -49,6 +39,8 @@ body{
 button,input,select{font:inherit;color:inherit}
 h1,h2,h3{font-family:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;margin:0}
 .wrap{max-width:720px;margin:0 auto;padding:22px 18px}
+.wrap.wide{max-width:920px}
+.wrap.boardwide{max-width:960px}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 :focus-visible{outline:3px solid var(--ink);outline-offset:2px;border-radius:6px}
 
@@ -57,7 +49,7 @@ h1,h2,h3{font-family:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;margi
 .sub{color:var(--muted);margin:0;font-size:14px}
 
 /* Do this now strip */
-.pick{background:var(--accent);color:var(--navy);border-radius:16px;padding:16px 18px;margin-bottom:22px}
+.pick{background:var(--accent);color:var(--navy);border-radius:16px;padding:16px 18px;margin-bottom:22px;max-width:720px}
 .pick :focus-visible{outline-color:var(--navy)}
 .pick-lead{margin:0 0 2px;font-weight:600;font-size:14px}
 .pick-title{font-weight:800;font-size:clamp(22px,5vw,30px);line-height:1.12;letter-spacing:-.02em;margin:0 0 4px}
@@ -78,8 +70,8 @@ h1,h2,h3{font-family:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;margi
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .chip.on[style]{color:#0E1122}}
 .hint{margin:4px 0 0;font-size:14px;color:var(--muted)}
 
-/* Add row */
-.add{display:flex;align-items:center;gap:8px;border-bottom:2px solid var(--ink);padding:6px 0;margin:14px 0 4px}
+/* Home add row */
+.add{display:flex;align-items:center;gap:8px;border-bottom:2px solid var(--ink);padding:6px 0;margin:14px 0 4px;max-width:720px}
 .add svg{flex:none;color:var(--muted)}
 .add input[type=text]{flex:1;min-width:0;background:transparent;border:0;font-size:17px;padding:10px 0;min-height:44px}
 .add input::placeholder{color:var(--muted)}
@@ -89,21 +81,73 @@ h1,h2,h3{font-family:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;margi
 .add select option{color:#151B33}
 .add button{flex:none;border:0;background:var(--ink);color:var(--bg);border-radius:999px;padding:9px 16px;font-weight:600;font-size:14px;cursor:pointer;min-height:40px}
 
-/* Sections */
-.sec{margin-top:26px}
+/* Section headings */
 .sec-h{display:flex;align-items:center;gap:10px;padding-bottom:8px;border-bottom:2px solid var(--ink)}
 .sec-h svg{flex:none;width:22px;height:22px}
 .sec-h h3{font-weight:800;font-size:20px;letter-spacing:-.01em}
 .n{font-size:14px;font-weight:600;color:var(--muted)}
-.fold{margin-left:auto;border:0;background:transparent;color:var(--muted);font-weight:600;font-size:14px;cursor:pointer;padding:8px 4px;min-height:40px}
+
+/* Rows */
+.rows{list-style:none;margin:0;padding:0}
+.row{display:flex;align-items:center;gap:4px;border-bottom:1px solid var(--line);min-height:58px;position:relative}
+.chk{flex:none;width:46px;height:46px;border:0;background:transparent;display:grid;place-items:center;cursor:pointer;color:var(--ink);margin-left:-10px;border-radius:50%}
+.chk svg{width:26px;height:26px;display:block}
+.chk .ck{stroke:var(--bg)}
+.chk:active svg{transform:scale(.88)}
+.rt{flex:1;min-width:0;padding:8px 0}
+.txt{display:block;font-size:17px;line-height:1.3;overflow-wrap:anywhere}
+.cat{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;font-weight:600;margin-top:3px;color:hsl(var(--h) var(--cs) var(--cl))}
+.cat i{width:8px;height:8px;border-radius:50%;background:currentColor;display:inline-block;margin-right:6px;vertical-align:middle}
+.x{flex:none;width:40px;height:40px;border:0;background:transparent;color:var(--muted);border-radius:50%;cursor:pointer;display:grid;place-items:center;opacity:.75}
+.x:hover,.x:focus-visible{opacity:1;color:var(--ink)}
+.row[data-status="done"] .txt{color:var(--muted);text-decoration:line-through;text-decoration-thickness:1px}
+.empty{color:var(--muted);padding:14px 0;margin:0;border-bottom:1px solid var(--line);font-size:15px}
+
+/* Empty placeholder rows: blank lines you can type into */
+.row.ph form{display:flex;align-items:center;gap:4px;width:100%}
+.ph .pc{flex:none;width:46px;height:46px;display:grid;place-items:center;color:var(--muted);opacity:.35;margin-left:-10px}
+.ph .pc svg{width:26px;height:26px}
+.ph input{flex:1;min-width:0;background:transparent;border:0;font-size:17px;padding:12px 0;min-height:46px}
+.ph input::placeholder{color:var(--muted);opacity:.5}
+.ph input:focus-visible{outline:none}
+.ph:focus-within{border-bottom-color:var(--accent);box-shadow:0 1px 0 var(--accent)}
+.ph .padd{display:none;flex:none;border:0;background:var(--ink);color:var(--bg);border-radius:999px;padding:7px 14px;font-weight:600;font-size:13px;cursor:pointer;min-height:34px}
+.ph:focus-within .padd{display:inline-block}
+
+/* Lists overview: every list visible, two columns */
+.lgrid{column-count:2;column-gap:28px}
+.lblock{break-inside:avoid;-webkit-column-break-inside:avoid;display:inline-block;width:100%;margin:0 0 30px}
+.lhead{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;border-bottom:2px solid var(--ink);background:transparent;padding:0 0 8px;cursor:pointer;min-height:44px}
+.ldot{flex:none;width:14px;height:14px;border-radius:50%;background:hsl(var(--h) var(--cs) var(--cl))}
+.lname{display:block;flex:1;min-width:0;font-family:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;font-weight:800;font-size:20px;line-height:1.15;letter-spacing:-.01em}
+.lcount{flex:none;font-size:14px;font-weight:600;color:var(--muted);text-align:right}
+.lhead svg{flex:none;color:var(--muted)}
+.lblock .row{min-height:46px}
+.lblock .rt{padding:6px 0}
+.lblock .chk,.lblock .ph .pc{width:38px;height:38px;margin-left:-8px}
+.lblock .chk svg,.lblock .ph .pc svg{width:22px;height:22px}
+.lblock .txt{font-size:15px}
+.lblock .x{width:32px;height:32px}
+.lblock .x svg{width:15px;height:15px}
+.lblock .ph input{font-size:15px;min-height:42px;padding:6px 0}
+.lblock .ph .padd{padding:6px 11px;min-height:30px;font-size:12px}
+@media (max-width:480px){
+  .lgrid{column-gap:14px}
+  .lhead{gap:6px}
+  .lname{font-size:16px}
+  .lblock .txt{font-size:14px}
+  .lhead svg{display:none}
+}
+
+/* Opened list */
+.back{display:inline-flex;align-items:center;gap:4px;border:0;background:transparent;color:var(--muted);font-weight:600;padding:8px 8px 8px 0;margin-bottom:4px;cursor:pointer;min-height:40px}
+.list-title{font-weight:800;font-size:clamp(34px,8vw,52px);line-height:1.05;letter-spacing:-.025em;color:hsl(var(--h) var(--cs) var(--cl))}
+.list-q{color:var(--muted);margin:6px 0 18px}
+.opened .rows{border-top:2px solid var(--ink)}
 
 /* Home board: three columns side by side */
-.wrap.boardwide{max-width:960px}
-.boardwide .pick{max-width:720px}
 .board{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;margin-top:22px;align-items:start}
 .bcol{min-width:0}
-.bcol .cat{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.bcol .cat i{margin-right:6px;vertical-align:middle}
 @media (max-width:600px){
   .wrap.boardwide{padding-left:12px;padding-right:12px}
   .board{gap:8px}
@@ -117,63 +161,9 @@ h1,h2,h3{font-family:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;margi
   .bcol .rt{padding:0}
   .bcol .txt{font-size:13.5px;line-height:1.25}
   .bcol .cat{font-size:11px;margin-top:4px}
-  .bcol .x{display:none}
+  .bcol .x{position:absolute;top:1px;right:-6px;width:34px;height:34px}
+  .bcol .x svg{width:15px;height:15px}
   .bcol .empty{font-size:13px;padding:10px 0}
-}
-
-/* Rows */
-.rows{list-style:none;margin:0;padding:0}
-.row{display:flex;align-items:center;gap:4px;border-bottom:1px solid var(--line);min-height:58px}
-.chk{flex:none;width:46px;height:46px;border:0;background:transparent;display:grid;place-items:center;cursor:pointer;color:var(--ink);margin-left:-10px;border-radius:50%}
-.chk svg{width:26px;height:26px;display:block}
-.chk .ck{stroke:var(--bg)}
-.chk:active svg{transform:scale(.88)}
-.rt{flex:1;min-width:0;padding:8px 0}
-.txt{display:block;font-size:17px;line-height:1.3;overflow-wrap:anywhere}
-.cat{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;margin-top:3px;color:hsl(var(--h) var(--cs) var(--cl))}
-.cat i{width:8px;height:8px;border-radius:50%;background:currentColor;display:inline-block}
-.x{flex:none;width:40px;height:40px;border:0;background:transparent;color:var(--muted);border-radius:50%;cursor:pointer;display:grid;place-items:center;opacity:.65}
-.x:hover,.x:focus-visible{opacity:1}
-.row[data-status="done"] .txt{color:var(--muted);text-decoration:line-through;text-decoration-thickness:1px}
-.empty{color:var(--muted);padding:14px 0;margin:0;border-bottom:1px solid var(--line);font-size:15px}
-
-/* All lists */
-.lrow{display:flex;align-items:center;gap:14px;width:100%;text-align:left;border:0;border-bottom:1px solid var(--line);background:transparent;padding:14px 0;cursor:pointer;min-height:68px}
-.ldot{flex:none;width:14px;height:14px;border-radius:50%;background:hsl(var(--h) var(--cs) var(--cl))}
-.lmid{flex:1;min-width:0}
-.lname{display:block;font-family:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;font-weight:800;font-size:20px;line-height:1.15;letter-spacing:-.01em}
-.lq{display:block;color:var(--muted);font-size:14px;margin-top:2px}
-.lcount{flex:none;font-size:14px;font-weight:600;color:var(--muted);text-align:right}
-.lrow svg{flex:none;color:var(--muted)}
-.back{display:inline-flex;align-items:center;gap:4px;border:0;background:transparent;color:var(--muted);font-weight:600;padding:8px 8px 8px 0;margin-bottom:4px;cursor:pointer;min-height:40px}
-.list-title{font-weight:800;font-size:clamp(34px,8vw,52px);line-height:1.05;letter-spacing:-.025em;color:hsl(var(--h) var(--cs) var(--cl))}
-.list-q{color:var(--muted);margin:6px 0 4px}
-
-/* Lists overview: every list visible, two columns */
-.wrap.wide{max-width:920px}
-.lgrid{column-count:2;column-gap:28px}
-.lblock{break-inside:avoid;-webkit-column-break-inside:avoid;display:inline-block;width:100%;margin:0 0 30px}
-.lhead{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;border-bottom:2px solid var(--ink);background:transparent;padding:0 0 8px;cursor:pointer;min-height:44px}
-.lhead .lname{flex:1;min-width:0}
-.lhead svg{flex:none;color:var(--muted)}
-.lblock .row{min-height:46px}
-.lblock .rt{padding:6px 0}
-.lblock .chk{width:38px;height:38px;margin-left:-8px}
-.lblock .chk svg{width:22px;height:22px}
-.lblock .txt{font-size:15px}
-.lblock .x{display:none}
-.lblock .add{margin:4px 0 0;padding:2px 0;gap:6px;border-bottom:1px solid var(--line)}
-.lblock .add:focus-within{border-bottom-color:var(--accent);box-shadow:0 1px 0 var(--accent)}
-.lblock .add svg{width:18px;height:18px;margin-left:2px}
-.lblock .add input[type=text]{font-size:15px;min-height:42px;padding:6px 0}
-.lblock .add button{padding:7px 12px;font-size:13px;min-height:34px}
-@media (max-width:480px){.lblock .add svg{display:none}}
-@media (max-width:480px){
-  .lgrid{column-gap:14px}
-  .lhead{gap:6px}
-  .lhead .lname{font-size:16px}
-  .lblock .txt{font-size:14px}
-  .lhead svg{display:none}
 }
 
 /* Nav + toast */
@@ -182,8 +172,11 @@ h1,h2,h3{font-family:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;margi
 .nav button{display:inline-flex;align-items:center;gap:8px;border:0;background:transparent;color:var(--bg);padding:11px 22px;border-radius:999px;font-weight:600;font-size:15px;cursor:pointer;min-height:46px}
 .nav button[aria-current="page"]{background:var(--accent);color:var(--navy)}
 .nav :focus-visible{outline-color:var(--accent)}
-.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(86px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:999px;font-size:14px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .15s;max-width:calc(100% - 32px);text-align:center}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(86px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:8px 10px 8px 18px;border-radius:999px;font-size:14px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .15s;max-width:calc(100% - 32px);text-align:center;display:flex;align-items:center;gap:10px}
 .toast.show{opacity:1}
+.toast.act.show{pointer-events:auto}
+.toast button{border:0;background:var(--accent);color:var(--navy);border-radius:999px;padding:7px 14px;font-weight:700;font-size:13px;cursor:pointer;min-height:32px}
+.toast:not(.act){padding-right:18px}
 @media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
@@ -196,26 +189,30 @@ h1,h2,h3{font-family:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;margi
 (function(){
 'use strict';
 
+/* Each list starts with one item: the most common thing people want from that list.
+   The other four lines are empty placeholders you can type into. */
 var CATS=[
- {id:'interest',name:'Interests',q:'What pulls your attention?',seeds:["Try a hobby you've never tried for 30 minutes","Watch a documentary on a topic you know nothing about","Follow three people who do work you admire","Visit a hobby shop or market","Join a local club or meetup"]},
- {id:'passion',name:'Passions',q:'What would you do for free?',seeds:["Write down what you would do for free","Spend one hour on the thing that makes you lose track of time","Teach someone what you love","Start a 30-day streak on your passion","Find one person who turned this into a career"]},
- {id:'curiosity',name:'Curiosities',q:'What do you wonder about?',seeds:["Look up how something you use daily actually works","Ask someone about their job, then just listen","Read a random Wikipedia article","Take apart a broken gadget","Write 10 'why' questions and answer one"]},
- {id:'creativity',name:'Creativity',q:'What can you make right now?',seeds:["Sketch what is in front of you for 10 minutes","Write a six-line story","Make something from things around the house","Take 20 photos of one object","Change one ingredient in a recipe you know"]},
- {id:'purpose',name:'Purpose',q:'What do you want your time to count for?',seeds:["Write what you want this year to stand for","Volunteer for one afternoon","Call someone who could use a call","List three problems you would like to help solve","Set one goal that helps someone besides you"]},
- {id:'courses',name:'Courses',q:'What are you ready to study?',seeds:["Finish one free lesson on a topic you bookmarked","Audit a free course on Coursera or edX","Take a beginner course in design","Learn the basics of personal finance","Try a short course on public speaking"]},
- {id:'books',name:'Books',q:'What will you read next?',seeds:["Read 20 pages of the book on your shelf","Pick a classic you have skipped","Read a biography","Try an audiobook on your next walk","Reread a book that mattered to you"]},
- {id:'movies',name:'Movies',q:'What will you watch tonight?',seeds:["Watch a film from a country you have never seen","Watch an acclaimed movie from before 1990","Rewatch a favourite and notice something new","Pick a documentary","Watch a movie in a genre you usually avoid"]},
- {id:'skills',name:'Skills to learn',q:'What do you want to be good at?',seeds:["Learn to touch-type","Learn three new dishes","Learn basic video editing","Learn Excel or Sheets properly","Build a tiny project in code"]},
- {id:'places',name:'Places to visit',q:'Where do you want to go?',seeds:["Walk through a neighbourhood you have never explored","Visit a museum or gallery nearby","Plan a day trip somewhere new","Find a sunrise or sunset spot","Pick a city to visit this year"]},
- {id:'languages',name:'Languages to learn',q:'Whose words do you want to understand?',seeds:["Learn 10 greetings in a new language","Do a 10-minute lesson in a language app","Watch a short film in that language with subtitles","Find a language exchange partner","Label things around your home in that language"]},
- {id:'money',name:'Ways to make money',q:'How could your time earn?',seeds:["List three skills people would pay for","Sell something you no longer use","Offer a one-hour service to a friend","Set up a freelance profile","Write down one monthly side-income target"]},
- {id:'products',name:'Products to build',q:'What is worth making?',seeds:["Write down a problem you hit this week","Sketch the simplest version of an app idea","Talk to three people who have that problem","Build a one-page landing page","Ship a tiny tool in one weekend"]},
- {id:'jobs',name:'Jobs to do',q:'What have you been putting off?',seeds:["Clear your inbox","Update your CV or profile","Fix the small thing you keep putting off","Plan tomorrow in five minutes","Organise one drawer or folder"]}
+ {id:'interest',name:'Interests',q:'What pulls your attention?',common:'Try a hobby you have never tried'},
+ {id:'passion',name:'Passions',q:'What would you do for free?',common:'Spend an hour on something you love'},
+ {id:'curiosity',name:'Curiosities',q:'What do you wonder about?',common:'Look up something you have always wondered about'},
+ {id:'creativity',name:'Creativity',q:'What can you make right now?',common:'Draw, write or make something small'},
+ {id:'purpose',name:'Purpose',q:'What do you want your time to count for?',common:'Write down what matters most to you'},
+ {id:'courses',name:'Courses',q:'What are you ready to study?',common:'Finish one lesson of an online course'},
+ {id:'books',name:'Books',q:'What will you read next?',common:'Read 20 pages of a book'},
+ {id:'movies',name:'Movies',q:'What will you watch tonight?',common:'Watch a movie you have been meaning to see'},
+ {id:'skills',name:'Skills to learn',q:'What do you want to be good at?',common:'Practise a new skill for 30 minutes'},
+ {id:'places',name:'Places to visit',q:'Where do you want to go?',common:'Visit a place you have never been to'},
+ {id:'languages',name:'Languages to learn',q:'Whose words do you want to understand?',common:'Practise a new language for 10 minutes'},
+ {id:'money',name:'Ways to make money',q:'How could your time earn?',common:'Find one way to earn extra income'},
+ {id:'products',name:'Products to build',q:'What is worth making?',common:'Write down a product idea'},
+ {id:'jobs',name:'Jobs to do',q:'What have you been putting off?',common:'Clear your inbox'}
 ];
 CATS.forEach(function(c,i){c.h=Math.round(i*360/CATS.length+10);});
 var byId={};CATS.forEach(function(c){byId[c.id]=c;});
+var LINES=5; /* every list shows five lines: filled items first, then empty placeholders */
+var NOT_ON_HOME=['passion','purpose','money','products']; /* the other ten start on the Home board */
 
-var KEY='nextup-v3';
+var KEY='nextup-v4';
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7);}
 function esc(s){return String(s).replace(/[&<>"']/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m];});}
 function load(){
@@ -223,23 +220,22 @@ function load(){
   return null;
 }
 function save(){try{localStorage.setItem(KEY,JSON.stringify({items:state.items}));}catch(e){}}
-/* Every list starts with five placeholder to-dos. Ten of them also sit on the Home board, all in To do. */
-var HOME_PICKS=['6:0','13:0','3:0','2:2','7:3','8:0','5:0','9:0','10:1','0:0'];
 function seedItems(){
-  var out=[];
-  for(var k=0;k<5;k++){
-    CATS.forEach(function(c,ci){
-      var onHome=HOME_PICKS.indexOf(ci+':'+k)>=0;
-      out.push({id:uid(),cat:c.id,text:c.seeds[k],status:'todo',onHome:onHome});
-    });
-  }
-  return out;
+  return CATS.map(function(c){return {id:uid(),cat:c.id,text:c.common,status:'todo',onHome:NOT_ON_HOME.indexOf(c.id)<0};});
 }
 
-var state={view:'home',cat:null,filter:'all',lastCat:'interest',doneOpen:true,pickId:null,flash:false,refocus:false,items:load()||seedItems()};
+var state={view:'home',cat:null,filter:'all',lastCat:'interest',pickId:null,flash:false,refocus:null,undo:null,items:load()||seedItems()};
 
 var app=document.getElementById('app'),navEl=document.getElementById('nav'),toastEl=document.getElementById('toast'),toastTimer;
-function toast(msg){toastEl.textContent=msg;toastEl.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(function(){toastEl.classList.remove('show');},1800);}
+function toast(msg,withUndo){
+  toastEl.textContent='';
+  var s=document.createElement('span');s.textContent=msg;toastEl.appendChild(s);
+  if(withUndo){var b=document.createElement('button');b.type='button';b.setAttribute('data-action','undo');b.textContent='Undo';toastEl.appendChild(b);}
+  toastEl.classList.toggle('act',!!withUndo);
+  toastEl.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(function(){toastEl.classList.remove('show');},withUndo?5000:1800);
+}
 
 var LABEL={todo:'To do',doing:'In progress',done:'Done'};
 var EMPTY={doing:'Tap a circle to start one.',todo:'Nothing waiting.',done:'Nothing finished yet.'};
@@ -267,13 +263,25 @@ function shuffle(){
 function setStatus(id,to){
   var it=state.items.find(function(i){return i.id===id;});
   if(!it||it.status===to)return;
-  var wasHome=it.onHome;it.status=to;if(to!=='todo')it.onHome=true;save();
+  var wasHome=it.onHome;
+  it.status=to;if(to!=='todo')it.onHome=true;save();
   toast(!wasHome&&it.onHome?'Moved to Home as '+LABEL[to]:'Moved to '+LABEL[to]);
 }
 function addItem(cat,text,onHome){
   text=text.trim();if(!text)return;
   state.items.push({id:uid(),cat:cat,text:text,status:'todo',onHome:!!onHome});
   state.lastCat=cat;save();toast(onHome?'Added to To do':'Added to the list');
+}
+function removeItem(id){
+  var idx=state.items.findIndex(function(i){return i.id===id;});
+  if(idx<0)return;
+  state.undo={item:state.items[idx],idx:idx};
+  state.items.splice(idx,1);save();toast('Removed',true);
+}
+function undoRemove(){
+  if(!state.undo)return;
+  state.items.splice(Math.min(state.undo.idx,state.items.length),0,state.undo.item);
+  state.undo=null;save();toast('Restored');
 }
 
 /* ---------- icons ---------- */
@@ -293,7 +301,19 @@ function row(i,showCat){
   return '<li class="row" data-status="'+i.status+'" style="--h:'+c.h+'">'+
     '<button type="button" class="chk" data-action="cycle" data-id="'+i.id+'" aria-label="'+ACTION[i.status]+': '+esc(i.text)+'">'+ICON[i.status]+'</button>'+
     '<div class="rt"><span class="txt">'+esc(i.text)+'</span>'+(showCat?'<span class="cat"><i></i>'+esc(c.name)+'</span>':'')+'</div>'+
-    '<button type="button" class="x" data-action="remove" data-id="'+i.id+'" aria-label="Remove: '+esc(i.text)+'">'+ICON.x+'</button></li>';
+    '<button type="button" class="x" data-action="remove" data-id="'+i.id+'" aria-label="Delete: '+esc(i.text)+'">'+ICON.x+'</button></li>';
+}
+function phRow(c,k){
+  return '<li class="row ph"><form class="phf" data-fixed="'+c.id+'"><span class="pc" aria-hidden="true">'+ICON.todo+'</span>'+
+    '<input id="ph-'+c.id+'-'+k+'" type="text" placeholder="Add item" aria-label="Add item to '+esc(c.name)+'" autocomplete="off" maxlength="120">'+
+    '<button type="submit" class="padd">Add</button></form></li>';
+}
+/* filled items, then empty placeholder lines up to five (always at least one to type into) */
+function listBody(c,items){
+  var html=items.map(function(i){return row(i,false);}).join('');
+  var n=Math.max(1,LINES-items.length);
+  for(var k=0;k<n;k++)html+=phRow(c,k);
+  return '<ul class="rows">'+html+'</ul>';
 }
 function sections(items,showCat){
   return '<div class="board">'+['todo','doing','done'].map(function(k){
@@ -302,18 +322,10 @@ function sections(items,showCat){
     return '<section class="bcol" aria-label="'+LABEL[k]+'"><div class="sec-h">'+ICON[k]+'<h3>'+LABEL[k]+'</h3><span class="n">'+list.length+'</span></div>'+body+'</section>';
   }).join('')+'</div>';
 }
-function flatList(items){
-  if(!items.length)return '<p class="empty">Nothing here yet. Add your first item above.</p>';
-  return '<ul class="rows" style="border-top:2px solid var(--ink)">'+items.map(function(i){return row(i,false);}).join('')+'</ul>';
-}
-function addForm(fixedCat,defCat){
-  var sel='';
-  if(!fixedCat){
-    sel='<label class="sr" for="add-cat">List</label><select id="add-cat">'+CATS.map(function(c){return '<option value="'+c.id+'"'+(c.id===defCat?' selected':'')+'>'+esc(c.name)+'</option>';}).join('')+'</select>';
-  }
-  var ph=fixedCat?'Add to '+byId[fixedCat].name:'Add something to do';
-  return '<form class="add" data-fixed="'+(fixedCat||'')+'">'+ICON.plus+'<label class="sr" for="add-text">New item</label>'+
-    '<input id="add-text" type="text" placeholder="'+esc(ph)+'" autocomplete="off" maxlength="120" required>'+sel+
+function addForm(defCat){
+  var sel='<label class="sr" for="add-cat">List</label><select id="add-cat">'+CATS.map(function(c){return '<option value="'+c.id+'"'+(c.id===defCat?' selected':'')+'>'+esc(c.name)+'</option>';}).join('')+'</select>';
+  return '<form class="add">'+ICON.plus+'<label class="sr" for="add-text">New item</label>'+
+    '<input id="add-text" type="text" placeholder="Add something to do" autocomplete="off" maxlength="120" required>'+sel+
     '<button type="submit">Add</button></form>';
 }
 function chip(id,label,h){
@@ -344,12 +356,7 @@ function homeView(){
     pickHtml(items)+
     '<div class="chips" role="group" aria-label="Filter by list">'+chip('all','All lists')+CATS.map(function(c){return chip(c.id,c.name,c.h);}).join('')+'</div>'+
     '<p class="hint">Tap a circle once to start, twice to finish.</p>'+
-    addForm(null,defCat)+sections(items,true);
-}
-function inlineAdd(c){
-  return '<form class="add" data-fixed="'+c.id+'">'+ICON.plus+'<label class="sr" for="add-'+c.id+'">Add to '+esc(c.name)+'</label>'+
-    '<input id="add-'+c.id+'" type="text" placeholder="Add item" autocomplete="off" maxlength="120" required>'+
-    '<button type="submit">Add</button></form>';
+    addForm(defCat)+sections(items,true);
 }
 function listsView(){
   var blocks=CATS.map(function(c){
@@ -357,16 +364,15 @@ function listsView(){
     var done=its.filter(function(i){return i.status==='done';}).length;
     return '<section class="lblock" style="--h:'+c.h+'" aria-label="'+esc(c.name)+'">'+
       '<button type="button" class="lhead" data-action="open" data-cat="'+c.id+'" aria-label="Open '+esc(c.name)+'"><span class="ldot"></span><span class="lname">'+esc(c.name)+'</span><span class="lcount">'+done+'/'+its.length+'</span>'+ICON.chev+'</button>'+
-      (its.length?'<ul class="rows">'+its.map(function(i){return row(i,false);}).join('')+'</ul>':'<p class="empty">Nothing here yet.</p>')+
-      inlineAdd(c)+'</section>';
+      listBody(c,its)+'</section>';
   }).join('');
   return '<header class="top"><h1 class="brand">All lists</h1><p class="sub">'+CATS.length+' lists. Start something and it moves to Home</p></header><div class="lgrid">'+blocks+'</div>';
 }
 function listView(){
   var c=byId[state.cat],items=state.items.filter(function(i){return i.cat===c.id;});
-  return '<div style="--h:'+c.h+'"><button type="button" class="back" data-action="nav" data-view="lists">'+ICON.back+'All lists</button>'+
+  return '<div class="opened" style="--h:'+c.h+'"><button type="button" class="back" data-action="nav" data-view="lists">'+ICON.back+'All lists</button>'+
     '<h1 class="list-title">'+esc(c.name)+'</h1><p class="list-q">'+esc(c.q)+'</p>'+
-    addForm(c.id)+flatList(items)+'</div>';
+    listBody(c,items)+'</div>';
 }
 function navHtml(){
   var home=state.view==='home';
@@ -381,7 +387,7 @@ function render(){
   app.classList.toggle('boardwide',state.view==='home');
   app.innerHTML=state.view==='home'?homeView():state.view==='lists'?listsView():listView();
   navEl.innerHTML=navHtml();
-  if(state.refocus){var el=document.getElementById(state.refocus);if(el)el.focus();state.refocus=false;}
+  if(state.refocus){var el=document.getElementById(state.refocus);if(el)el.focus();state.refocus=null;}
 }
 
 /* ---------- events ---------- */
@@ -393,32 +399,27 @@ document.addEventListener('click',function(e){
   else if(a==='filter'){state.filter=t.getAttribute('data-cat');}
   else if(a==='cycle'){var it=state.items.find(function(i){return i.id===id;});if(it)setStatus(id,NEXT[it.status]);}
   else if(a==='setstatus'){setStatus(id,t.getAttribute('data-to'));}
-  else if(a==='remove'){state.items=state.items.filter(function(i){return i.id!==id;});save();toast('Removed');}
+  else if(a==='remove'){removeItem(id);}
+  else if(a==='undo'){undoRemove();}
   else if(a==='shuffle'){shuffle();}
-  else if(a==='toggledone'){state.doneOpen=!state.doneOpen;}
   render();
 });
 document.addEventListener('submit',function(e){
-  var f=e.target.closest&&e.target.closest('form.add');if(!f)return;
+  var f=e.target.closest&&e.target.closest('form.add, form.phf');if(!f)return;
   e.preventDefault();
   var inp=f.querySelector('input[type=text]');
   var txt=inp.value;
-  var fixed=f.getAttribute('data-fixed');
-  var sel=f.querySelector('#add-cat');
-  var cat=fixed||(sel?sel.value:state.lastCat);
   if(!txt.trim())return;
-  addItem(cat,txt,state.view==='home');state.refocus=inp.id;render();
+  var isPh=f.classList.contains('phf');
+  var sel=f.querySelector('#add-cat');
+  var cat=isPh?f.getAttribute('data-fixed'):(sel?sel.value:state.lastCat);
+  addItem(cat,txt,state.view==='home');
+  state.refocus=isPh?'ph-'+cat+'-0':inp.id;
+  render();
 });
 
 render();
 })();
-</script>
-<script>
-if('serviceWorker' in navigator){
-  window.addEventListener('load',function(){
-    navigator.serviceWorker.register('sw.js').catch(function(){});
-  });
-}
 </script>
 </body>
 </html>
