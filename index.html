@@ -156,11 +156,28 @@ h1,h2,h3{font-family:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;margi
 .dangerlink:hover{color:var(--ink)}
 @media (max-width:480px){.editing .lcount{display:none}}
 
+/* Idea library */
+.idea-btn{flex:none;width:36px;height:36px;border:0;background:transparent;color:var(--muted);border-radius:50%;cursor:pointer;display:grid;place-items:center}
+.idea-btn:hover,.idea-btn:focus-visible{color:var(--ink);background:color-mix(in srgb,var(--ink) 10%,transparent)}
+.ideas-bar{margin:0 0 18px;display:flex;gap:8px;flex-wrap:wrap}
+.pbtn .bi{display:inline-flex;vertical-align:middle;margin-right:8px}
+.pbtn .bi svg{display:block}
+.ideas{background:color-mix(in srgb,hsl(var(--h) var(--cs) var(--cl)) 10%,transparent);border-radius:16px;padding:14px 16px 8px;margin:0 0 26px}
+.ideas-h{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+.ideas-h h2{font-weight:800;font-size:20px;letter-spacing:-.01em}
+.idea-row{display:flex;align-items:center;gap:12px;border-bottom:1px solid color-mix(in srgb,var(--ink) 12%,transparent);min-height:58px;padding:6px 0}
+.idea-row:last-child{border-bottom:0}
+.idea-row .txt{flex:1;min-width:0}
+.iadd{flex:none;border:0;background:var(--accent);color:var(--navy);border-radius:999px;padding:8px 16px;font-weight:700;font-size:13px;cursor:pointer;min-height:38px}
+.ideas .empty{border-bottom:0}
+@media (max-width:480px){.lcount{display:none}.ideas{padding:12px 12px 6px}}
+
 /* Opened list */
 .back{display:inline-flex;align-items:center;gap:4px;border:0;background:transparent;color:var(--muted);font-weight:600;padding:8px 8px 8px 0;margin-bottom:4px;cursor:pointer;min-height:40px}
 .list-title{font-weight:800;font-size:clamp(34px,8vw,52px);line-height:1.05;letter-spacing:-.025em;color:hsl(var(--h) var(--cs) var(--cl))}
 .list-q{color:var(--muted);margin:6px 0 18px}
 .opened .rows{border-top:2px solid var(--ink)}
+.opened .ideas .rows{border-top:0}
 
 /* Home board: three columns side by side */
 .board{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;margin-top:22px;align-items:start}
@@ -233,6 +250,29 @@ CATS.forEach(function(c,i){c.h=Math.round(i*360/CATS.length+10);});
 var byId={};
 function clone(c){return Object.assign({},c);}
 function reindex(){byId={};state.cats.forEach(function(c){byId[c.id]=c;});}
+/* Idea library: suggestions you can add to a list with one tap. Custom lists have none. */
+var IDEAS={
+ "certifications":["Compare three certifications in your field", "Check which certification your target job asks for most", "Sign up for a free practice test", "Block 30 minutes to study for an exam", "Ask a colleague which certification helped them most", "Look up the fee and format of one certification", "Finish a project-management basics course", "Try a beginner cloud certification (AWS, Azure or Google)", "Earn a free digital-skills badge online", "Set an exam date and work backwards from it", "Add your certifications to your CV and LinkedIn", "Find a study group for the exam you want"],
+ "ideas":["Note three things that annoyed you today and how you would fix them", "Review your old ideas and pick the best one", "Sketch one idea on paper", "Combine two ideas into something new", "Ask a friend what they would change about their daily routine", "Write 10 ideas in 10 minutes, good or bad", "Turn a favourite idea into one small first step", "Record a voice note of an idea on your walk", "Revisit an idea you gave up on and ask why", "Pick one idea and tell someone about it", "Start an ideas note on your phone home screen", "Look for an idea in a problem you had this week"],
+ "dreams":["Describe your perfect day in five lines", "List three places you would live if money was no issue", "Write a letter to yourself ten years from now", "Find someone living a dream of yours and read their story", "Make a small vision board", "Pick one dream and name its first step", "Tell a dream to a friend you trust", "Imagine your life at 60 and write what you would be proud of", "Save a photo that captures a dream", "Decide which dream matters most this year", "Put a date on one dream", "Write a dream you gave up on and ask if it still matters"],
+ "everyday":["Drink a glass of water", "Make your bed", "Reply to one message you have been avoiding", "Take a 10-minute walk", "Tidy your desk", "Pay a pending bill", "Prepare tomorrow's clothes and bag", "Do the dishes", "Stretch for five minutes", "Take your vitamins or medicines", "Write down three things for tomorrow", "Water your plants"],
+ "family":["Send a voice note to an old friend", "Plan a dinner with friends", "Write a thank-you message to someone", "Ask a parent about their childhood", "Schedule a weekly call with family", "Send a birthday wish to someone you have not spoken to in a while", "Share an old photo with the person in it", "Visit a relative this month", "Plan a small surprise for someone", "Reply to a message you owe someone", "Invite a neighbour for tea", "Ask a friend how they are, and really listen"],
+ "interest":["Watch a documentary on a topic you know nothing about", "Follow three people who do work you admire", "Visit a hobby shop or market", "Join a local club or meetup", "Try a new sport for one session", "Watch a beginner video on photography", "Learn how to play one song on an instrument", "Visit a pottery or craft class", "Grow something in a small pot", "Read about the history of something you use every day", "Ask a friend to show you their hobby", "Try a hobby you have never tried"],
+ "passion":["Write down what you would do for free", "Teach someone what you love", "Start a 30-day streak on your passion", "Find one person who turned this into a career", "Share something you made with a friend", "Rewatch or reread something that inspired you", "Block two hours this weekend for your passion", "Join a community around your passion", "Write why this matters to you", "Buy or borrow one tool that helps you do it better", "Finish something you started months ago", "Spend an hour on something you love"],
+ "curiosity":["Look up how something you use daily works", "Ask someone about their job, then just listen", "Read a random Wikipedia article", "Take apart a broken gadget", "Write 10 'why' questions and answer one", "Watch a short science explainer", "Listen to a podcast episode on a topic you know nothing about", "Ask a child what they wonder about", "Find out where your food comes from", "Learn the story behind your town's name", "Pick a word and learn where it comes from", "Look up something you have always wondered about"],
+ "creativity":["Sketch what is in front of you for 10 minutes", "Write a six-line story", "Make something from things around the house", "Take 20 photos of one object", "Change one ingredient in a recipe you know", "Write a short poem about today", "Make a playlist for a mood", "Doodle for five minutes without lifting the pen", "Redecorate one corner of a room", "Write a letter by hand", "Cook something without a recipe", "Draw, write or make something small"],
+ "purpose":["Write what you want this year to stand for", "Volunteer for one afternoon", "Call someone who could use a call", "List three problems you would like to help solve", "Set one goal that helps someone besides you", "Write your values in five words", "Donate something you do not use", "Help someone who is just starting out", "Ask a friend what they think you are good at", "Plan one kind act for this week", "Write a short note about the person you want to become", "Write down what matters most to you"],
+ "courses":["Audit a free course on Coursera or edX", "Take a beginner course in design", "Learn the basics of personal finance", "Try a short course on public speaking", "Start a free coding course", "Take a course on a subject you loved at school", "Finish a course you left halfway", "Sign up for a weekend workshop", "Watch the first video of a course you bookmarked", "Take a basic first-aid course", "Try a free course on AI basics", "Finish one lesson of an online course"],
+ "books":["Pick a classic you have skipped", "Read a biography", "Try an audiobook on your next walk", "Reread a book that mattered to you", "Borrow a book from a friend or library", "Read a short story before bed", "Read a book from a country you have never read", "Finish a book you started", "Read a book on money or habits", "Read a children's book you loved", "Write down three lessons from the last book you finished", "Read 20 pages of a book"],
+ "movies":["Watch a film from a country you have never seen", "Watch an acclaimed movie from before 1990", "Rewatch a favourite and notice something new", "Pick a documentary", "Watch a movie in a genre you usually avoid", "Watch a classic with a friend and talk about it", "Watch a short film", "Watch the movie of a book you read", "Host a small movie night", "Watch an award winner you missed", "Watch a film with subtitles", "Watch a movie you have been meaning to see"],
+ "skills":["Learn to touch-type", "Learn three new dishes", "Learn basic video editing", "Learn Excel or Sheets properly", "Build a tiny project in code", "Learn to swim or improve your stroke", "Learn basic bike or car repair", "Learn to speak in front of people", "Learn the basics of photography", "Learn to sew a button and a hem", "Learn a chess opening", "Practise a new skill for 30 minutes"],
+ "places":["Walk through a neighbourhood you have never explored", "Visit a museum or gallery nearby", "Plan a day trip somewhere new", "Find a sunrise or sunset spot", "Pick a city to visit this year", "Try a new cafe or restaurant nearby", "Visit a local market", "Walk to a place you usually drive to", "Visit a historic place in your city", "Spend an evening by the sea or a lake", "Plan a weekend away", "Visit a place you have never been to"],
+ "languages":["Learn 10 greetings in a new language", "Do a 10-minute lesson in a language app", "Watch a short film in that language with subtitles", "Find a language exchange partner", "Label things around your home in that language", "Learn to count to 20", "Listen to a song in that language and look up the words", "Learn how to introduce yourself", "Learn the 20 most common words", "Message a friend using only the new language", "Learn the alphabet or script", "Practise a new language for 10 minutes"],
+ "money":["List three skills people would pay for", "Sell something you no longer use", "Offer a one-hour service to a friend", "Set up a freelance profile", "Write down one monthly side-income target", "Look at how others earn from your hobby", "Pitch your skill to one possible client", "Make a simple price list for what you can do", "Offer to teach something you know", "Check if your employer has a learning budget", "Ask someone how they earn on the side", "Find one way to earn extra income"],
+ "products":["Write down a problem you hit this week", "Sketch the simplest version of an app idea", "Talk to three people who have that problem", "Build a one-page landing page", "Ship a tiny tool in one weekend", "List five existing alternatives and what they miss", "Write the one-sentence pitch", "Ask five people if they would pay for it", "Make a clickable mockup in an hour", "Name your product and check the domain", "Decide the smallest version you could launch", "Write down a product idea"],
+ "jobs":["Update your CV or profile", "Fix the small thing you keep putting off", "Plan tomorrow in five minutes", "Organise one drawer or folder", "Reply to the email that has waited longest", "Back up your phone photos", "Cancel a subscription you do not use", "Book the appointment you have been postponing", "Delete old files from your desktop", "Update your passwords", "Sort your wardrobe and donate extras", "Clear your inbox"]
+};
+var IDEA_BATCH=8;
 var LINES=5; /* every list shows five lines: filled items first, then empty placeholders */
 var NEW_IDS=['certifications','ideas','dreams','everyday','family']; /* lists added after the first release */
 var NOT_ON_HOME=['passion','purpose','money','products'].concat(NEW_IDS); /* the other ten start on the Home board */
@@ -247,7 +287,7 @@ function load(){
 function save(){try{localStorage.setItem(KEY,JSON.stringify({items:state.items,seeded:state.seeded,cats:state.cats}));}catch(e){}}
 function seedItem(c){return {id:uid(),cat:c.id,text:c.common,status:'todo',onHome:NOT_ON_HOME.indexOf(c.id)<0};}
 
-var state={view:'home',cat:null,filter:'all',lastCat:null,pickId:null,flash:false,refocus:null,undo:null,editing:false,creating:false,cats:[],items:[],seeded:[]};
+var state={view:'home',cat:null,filter:'all',lastCat:null,pickId:null,flash:false,refocus:null,undo:null,editing:false,creating:false,ideasOpen:false,ideaPage:{},cats:[],items:[],seeded:[]};
 (function(){
   var saved=load();
   if(saved){
@@ -359,6 +399,7 @@ var ICON={
   todo:'<svg viewBox="0 0 26 26" fill="none" aria-hidden="true"><circle cx="13" cy="13" r="10.5" stroke="currentColor" stroke-width="2"/></svg>',
   doing:'<svg viewBox="0 0 26 26" fill="none" aria-hidden="true"><path d="M13 2.5a10.5 10.5 0 0 0 0 21z" fill="#FFD23F"/><circle cx="13" cy="13" r="10.5" stroke="currentColor" stroke-width="2"/></svg>',
   done:'<svg viewBox="0 0 26 26" fill="none" aria-hidden="true"><circle cx="13" cy="13" r="11.5" fill="currentColor"/><path class="ck" d="M8 13.5l3.5 3.5L18.5 9.5" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  bulb:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg>',
   trash:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></svg>',
   x:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>',
   plus:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>',
@@ -429,13 +470,33 @@ function homeView(){
     '<p class="hint">Tap a circle once to start, twice to finish.</p>'+
     (state.cats.length?addForm(defCat):'<p class="hint">Create a list on the Lists screen to start adding items.</p>')+sections(items,true);
 }
+function ideasAvailable(c){
+  var have=state.items.filter(function(i){return i.cat===c.id;}).map(function(i){return i.text.trim().toLowerCase();});
+  var out=[];
+  (IDEAS[c.id]||[]).forEach(function(t,i){if(have.indexOf(t.toLowerCase())<0)out.push({t:t,i:i});});
+  return out;
+}
+function ideasHtml(c){
+  if(!IDEAS[c.id])return '';
+  var bar='<div class="ideas-bar"><button type="button" class="pbtn prim" data-action="toggleideas" aria-expanded="'+state.ideasOpen+'"><span class="bi">'+ICON.bulb+'</span>'+(state.ideasOpen?'Hide ideas':'Get ideas')+'</button></div>';
+  if(!state.ideasOpen)return bar;
+  var av=ideasAvailable(c),page=state.ideaPage[c.id]||0,show=[];
+  if(av.length<=IDEA_BATCH)show=av;
+  else{var start=(page*IDEA_BATCH)%av.length;for(var k=0;k<IDEA_BATCH;k++)show.push(av[(start+k)%av.length]);}
+  var body=show.length
+    ?'<ul class="rows">'+show.map(function(x){return '<li class="idea-row"><span class="txt">'+esc(x.t)+'</span><button type="button" class="iadd" data-action="addidea" data-cat="'+c.id+'" data-i="'+x.i+'" aria-label="Add to '+esc(c.name)+': '+esc(x.t)+'">Add</button></li>';}).join('')+'</ul>'
+    :'<p class="empty">You have added every idea we have for this list. Add your own below.</p>';
+  var more=av.length>IDEA_BATCH?'<button type="button" class="pbtn" data-action="moreideas">Show different ideas</button>':'';
+  return bar+'<section class="ideas" aria-label="Ideas for '+esc(c.name)+'"><div class="ideas-h"><h2>Ideas for '+esc(c.name)+'</h2>'+more+'</div>'+body+'</section>';
+}
 function listsView(){
   var blocks=state.cats.map(function(c){
     var its=state.items.filter(function(i){return i.cat===c.id;});
     var done=its.filter(function(i){return i.status==='done';}).length;
+    var bulb=IDEAS[c.id]?'<button type="button" class="idea-btn" data-action="ideas" data-cat="'+c.id+'" aria-label="Get ideas for '+esc(c.name)+'">'+ICON.bulb+'</button>':'';
     var rm=state.editing?'<button type="button" class="rm-list" data-action="removelist" data-cat="'+c.id+'" aria-label="Remove list '+esc(c.name)+'">'+ICON.trash+'</button>':'';
     return '<section class="lblock" style="--h:'+c.h+'" aria-label="'+esc(c.name)+'">'+
-      '<div class="lhead-row"><button type="button" class="lhead" data-action="open" data-cat="'+c.id+'" aria-label="Open '+esc(c.name)+'"><span class="ldot"></span><span class="lname">'+esc(c.name)+'</span><span class="lcount">'+done+'/'+its.length+'</span>'+ICON.chev+'</button>'+rm+'</div>'+
+      '<div class="lhead-row"><button type="button" class="lhead" data-action="open" data-cat="'+c.id+'" aria-label="Open '+esc(c.name)+'"><span class="ldot"></span><span class="lname">'+esc(c.name)+'</span><span class="lcount">'+done+'/'+its.length+'</span>'+ICON.chev+'</button>'+bulb+rm+'</div>'+
       listBody(c,its)+'</section>';
   }).join('');
   var creator=state.creating?'<div class="newlist"><label class="sr" for="new-list-name">List name</label><input id="new-list-name" type="text" placeholder="Name your list, e.g. Recipes to try" maxlength="40" autocomplete="off"><button type="button" class="pbtn prim" data-action="createlist">Create</button><button type="button" class="pbtn" data-action="cancelcreate">Cancel</button></div>':'';
@@ -451,7 +512,7 @@ function listView(){
   var items=state.items.filter(function(i){return i.cat===c.id;});
   return '<div class="opened" style="--h:'+c.h+'"><button type="button" class="back" data-action="nav" data-view="lists">'+ICON.back+'All lists</button>'+
     '<h1 class="list-title">'+esc(c.name)+'</h1><p class="list-q">'+esc(c.q)+'</p>'+
-    listBody(c,items)+
+    ideasHtml(c)+listBody(c,items)+
     '<button type="button" class="dangerlink" data-action="removelist" data-cat="'+c.id+'">'+ICON.trash+'Remove this list</button></div>';
 }
 function navHtml(){
@@ -476,14 +537,21 @@ document.addEventListener('click',function(e){
   var a=t.getAttribute('data-action'),id=t.getAttribute('data-id');
   if(a==='add'){submitAdd(t.closest('.phf, .add'));return;}
   if(a==='createlist'){doCreate();return;}
-  if(a==='nav'){state.view=t.getAttribute('data-view');state.cat=null;state.editing=false;state.creating=false;window.scrollTo(0,0);}
-  else if(a==='open'){state.view='list';state.cat=t.getAttribute('data-cat');window.scrollTo(0,0);}
+  if(a==='nav'){state.view=t.getAttribute('data-view');state.cat=null;state.editing=false;state.creating=false;state.ideasOpen=false;window.scrollTo(0,0);}
+  else if(a==='open'){state.view='list';state.cat=t.getAttribute('data-cat');state.ideasOpen=false;window.scrollTo(0,0);}
   else if(a==='filter'){state.filter=t.getAttribute('data-cat');}
   else if(a==='cycle'){var it=state.items.find(function(i){return i.id===id;});if(it)setStatus(id,NEXT[it.status]);}
   else if(a==='setstatus'){setStatus(id,t.getAttribute('data-to'));}
   else if(a==='remove'){removeItem(id);}
   else if(a==='undo'){undoRemove();}
   else if(a==='shuffle'){shuffle();}
+  else if(a==='ideas'){state.view='list';state.cat=t.getAttribute('data-cat');state.ideasOpen=true;state.editing=false;window.scrollTo(0,0);}
+  else if(a==='toggleideas'){state.ideasOpen=!state.ideasOpen;}
+  else if(a==='moreideas'){state.ideaPage[state.cat]=(state.ideaPage[state.cat]||0)+1;}
+  else if(a==='addidea'){
+    var ic=byId[t.getAttribute('data-cat')],txt=ic&&IDEAS[ic.id]?IDEAS[ic.id][+t.getAttribute('data-i')]:null;
+    if(txt)addItem(ic.id,txt,false);
+  }
   else if(a==='newlist'){state.creating=true;state.refocus='new-list-name';}
   else if(a==='cancelcreate'){state.creating=false;}
   else if(a==='editlists'){state.editing=!state.editing;}
