@@ -80,7 +80,7 @@ h1,h2,h3{font-family:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;margi
 .rt{flex:1;min-width:0;padding:8px 0}
 .txt{display:block;font-size:17px;line-height:1.3;overflow-wrap:anywhere}
 button.txt{background:none;border:0;padding:0;margin:0;text-align:left;width:100%;cursor:text}
-.edit-in{display:block;width:100%;font-size:17px;line-height:1.3;color:var(--ink);background:transparent;border:0;border-bottom:2px solid var(--accent);border-radius:0;padding:2px 0;min-height:30px}
+.edit-in{display:block;width:100%;font-family:inherit;font-size:17px;line-height:1.3;color:var(--ink);background:transparent;border:0;border-radius:0;padding:0;margin:0;box-shadow:0 2px 0 var(--accent);resize:none;overflow:hidden;overflow-wrap:anywhere;min-height:0}
 .edit-in:focus-visible{outline:none}
 .cat{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;font-weight:600;margin-top:3px;color:hsl(var(--h) var(--cs) var(--cl))}
 .cat i{width:8px;height:8px;border-radius:50%;background:currentColor;display:inline-block;margin-right:6px;vertical-align:middle}
@@ -196,6 +196,34 @@ body.dragging,body.dragging *{cursor:grabbing!important;-webkit-user-select:none
   .bcol .empty{font-size:13px;padding:10px 0}
   .bcol .pbtn{padding:8px 12px;min-height:36px;font-size:13px}
 }
+
+/* Wins */
+.winpill{display:inline-flex;align-items:center;gap:7px;border:0;background:var(--accent);color:var(--navy);border-radius:999px;padding:8px 16px;font-weight:700;font-size:13px;letter-spacing:.08em;cursor:pointer;min-height:40px}
+.wins-total{font-weight:800;font-size:clamp(34px,9vw,52px);line-height:1.05;letter-spacing:-.025em}
+.wins-sub{color:var(--muted);margin:6px 0 18px}
+.wstats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:0 0 16px}
+.wstat{background:color-mix(in srgb,var(--ink) 6%,transparent);border-radius:12px;padding:12px 14px}
+.wstat p{margin:0;font-size:13px;color:var(--muted)}
+.wstat strong{display:block;font-family:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;font-weight:800;font-size:30px;line-height:1.1}
+.mstones{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 28px}
+.ms{border:1px solid var(--line);border-radius:999px;padding:5px 12px;font-size:13px;font-weight:600;color:var(--muted)}
+.ms.on{background:var(--accent);color:var(--navy);border-color:transparent}
+.bylist{display:grid;grid-template-columns:minmax(0,40%) 1fr auto;align-items:center;gap:10px;padding:8px 0;font-size:14px}
+.bn{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bbar{height:8px;border-radius:6px;background:color-mix(in srgb,var(--ink) 10%,transparent);overflow:hidden}
+.bbar b{display:block;height:100%;border-radius:6px;background:hsl(var(--h,220) var(--cs) var(--cl))}
+.bc{font-weight:600;color:var(--muted)}
+.winsec{margin-top:26px}
+.winrow{display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--line);min-height:60px;padding:6px 0}
+.wchk{flex:none;width:26px;height:26px;color:var(--ink)}
+.wchk svg{width:26px;height:26px;display:block}
+.wchk .ck{stroke:var(--bg)}
+.wmain{flex:1;min-width:0}
+.wtxt{display:block;font-size:17px;line-height:1.3;overflow-wrap:anywhere}
+.wmeta{display:block;font-size:13px;color:var(--muted);margin-top:2px}
+.wl{font-weight:600;color:hsl(var(--h,220) var(--cs) var(--cl))}
+.chk.pop svg{animation:pop .5s cubic-bezier(.2,1.6,.4,1)}
+@keyframes pop{0%{transform:scale(.4)}60%{transform:scale(1.3)}100%{transform:scale(1)}}
 
 /* Vision board */
 .vsub{color:var(--muted);margin:0 0 16px}
@@ -318,10 +346,10 @@ function load(){
   try{var r=localStorage.getItem(KEY);if(r){var d=JSON.parse(r);if(d&&Array.isArray(d.items))return d;}}catch(e){}
   return null;
 }
-function save(){try{localStorage.setItem(KEY,JSON.stringify({items:state.items,seeded:state.seeded,cats:state.cats}));}catch(e){}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify({items:state.items,seeded:state.seeded,cats:state.cats,wins:state.wins}));}catch(e){}}
 function seedItem(c){return {id:uid(),cat:c.id,text:c.common,status:'todo',onHome:NOT_ON_HOME.indexOf(c.id)<0};}
 
-var state={view:'home',cat:null,lastCat:null,pickId:null,flash:false,refocus:null,undo:null,editing:false,creating:false,ideasOpen:false,ideaPage:{},media:[],mediaReady:false,persist:true,busy:0,viewer:null,refocusTile:null,editId:null,cats:[],items:[],seeded:[]};
+var state={view:'home',cat:null,lastCat:null,pickId:null,flash:false,refocus:null,undo:null,editing:false,creating:false,ideasOpen:false,ideaPage:{},media:[],mediaReady:false,persist:true,busy:0,viewer:null,refocusTile:null,editId:null,wins:[],winsMore:false,popId:null,cats:[],items:[],seeded:[]};
 (function(){
   var saved=load();
   if(saved){
@@ -333,6 +361,10 @@ var state={view:'home',cat:null,lastCat:null,pickId:null,flash:false,refocus:nul
   }
   reindex();
   state.items=state.items.filter(function(i){return byId[i.cat];});
+  /* the wins log: older saved data has none, so anything already finished is counted once */
+  state.wins=saved&&Array.isArray(saved.wins)?saved.wins:state.items.filter(function(i){return i.status==='done';}).map(function(i){
+    return {id:uid(),itemId:i.id,text:i.text,cat:i.cat,catName:byId[i.cat]?byId[i.cat].name:'',at:Date.now()};
+  });
   /* a built-in list that has not had its starter item yet gets one (first visit, or a list added in a newer version) */
   state.cats.forEach(function(c){
     if(c.common&&state.seeded.indexOf(c.id)<0){state.items.push(seedItem(c));state.seeded.push(c.id);}
@@ -341,14 +373,14 @@ var state={view:'home',cat:null,lastCat:null,pickId:null,flash:false,refocus:nul
 })();
 
 var app=document.getElementById('app'),navEl=document.getElementById('nav'),toastEl=document.getElementById('toast'),toastTimer;
-function toast(msg,withUndo){
+function toast(msg,withUndo,ms){
   toastEl.textContent='';
   var s=document.createElement('span');s.textContent=msg;toastEl.appendChild(s);
   if(withUndo){var b=document.createElement('button');b.type='button';b.setAttribute('data-action','undo');b.textContent='Undo';toastEl.appendChild(b);}
   toastEl.classList.toggle('act',!!withUndo);
   toastEl.classList.add('show');
   clearTimeout(toastTimer);
-  toastTimer=setTimeout(function(){toastEl.classList.remove('show');},withUndo?5000:1800);
+  toastTimer=setTimeout(function(){toastEl.classList.remove('show');},withUndo?5000:(ms||1800));
 }
 
 var LABEL={todo:'To do',doing:'In progress',done:'Done'};
@@ -377,9 +409,42 @@ function shuffle(){
 function setStatus(id,to){
   var it=state.items.find(function(i){return i.id===id;});
   if(!it||it.status===to)return;
-  var wasHome=it.onHome;
-  it.status=to;if(to!=='todo')it.onHome=true;save();
-  toast(!wasHome&&it.onHome?'Moved to Home as '+LABEL[to]:'Moved to '+LABEL[to]);
+  var wasHome=it.onHome,was=it.status;
+  it.status=to;if(to!=='todo')it.onHome=true;
+  var msg=!wasHome&&it.onHome?'Moved to Home as '+LABEL[to]:'Moved to '+LABEL[to],ms;
+  if(to==='done'){
+    state.wins.push({id:uid(),itemId:it.id,text:it.text,cat:it.cat,catName:byId[it.cat]?byId[it.cat].name:'',at:Date.now()});
+    msg=winMessage(state.wins.length);ms=WIN_TEXT[state.wins.length]?3400:2400;state.popId=it.id;
+  }else if(was==='done'){
+    var before=state.wins.length;
+    state.wins=state.wins.filter(function(w){return w.itemId!==it.id;});
+    if(state.wins.length<before)msg='Back to '+LABEL[to]+'. That win was taken back.';
+  }
+  save();toast(msg,false,ms);
+}
+/* ---------- wins ---------- */
+var MILESTONES=[1,10,25,50,100,250,500,1000];
+var WIN_TEXT={1:'Your first win. Nice.',10:'10 wins. Double digits.',25:'25 wins. That is a real habit.',50:'50 wins. Halfway to 100.',100:'100 wins. Be proud of that.',250:'250 wins. Look how far you have come.',500:'500 wins. Unstoppable.',1000:'1,000 wins. Remarkable.'};
+function winMessage(n){return WIN_TEXT[n]||('Nice. That is win number '+n+'.');}
+function dayStart(t){var d=new Date(t);d.setHours(0,0,0,0);return d.getTime();}
+function prevDay(t){var d=new Date(t);d.setDate(d.getDate()-1);d.setHours(0,0,0,0);return d.getTime();}
+function winStats(){
+  var today=dayStart(Date.now()),days={},list=[];
+  state.wins.forEach(function(w){var k=dayStart(w.at);if(!days[k]){days[k]=true;list.push(k);}});
+  list.sort(function(a,b){return a-b;});
+  var cur=0,t=days[today]?today:(days[prevDay(today)]?prevDay(today):null);
+  while(t!==null&&days[t]){cur++;t=prevDay(t);}
+  var best=0,run=0;
+  list.forEach(function(k,i){run=(i>0&&prevDay(k)===list[i-1])?run+1:1;if(run>best)best=run;});
+  var from=today;for(var n=0;n<6;n++)from=prevDay(from);
+  var week=state.wins.filter(function(w){return w.at>=from;}).length;
+  return {cur:cur,best:best,week:week};
+}
+function removeWin(id){
+  var idx=state.wins.findIndex(function(w){return w.id===id;});
+  if(idx<0)return;
+  state.undo={type:'win',w:state.wins[idx],idx:idx};
+  state.wins.splice(idx,1);save();toast('Win removed',true);
 }
 function addItem(cat,text,onHome){
   text=text.trim();if(!text)return;
@@ -410,6 +475,7 @@ function removeList(id){
 }
 function undoRemove(){
   var u=state.undo;if(!u)return;
+  if(u.type==='win'){state.wins.splice(Math.min(u.idx,state.wins.length),0,u.w);state.undo=null;save();toast('Restored');return;}
   if(u.type==='media'){
     state.media.splice(Math.min(u.idx,state.media.length),0,u.m);
     dbTx('readwrite',function(st){return st.put(toRecord(u.m));}).catch(function(){});
@@ -452,7 +518,13 @@ function txtHtml(i){
   return '<button type="button" class="txt" data-action="edit" data-id="'+i.id+'" aria-label="Edit: '+esc(i.text)+'">'+esc(i.text)+'</button>';
 }
 function editHtml(i){
-  return '<input id="edit-input" class="edit-in" type="text" maxlength="120" value="'+esc(i.text)+'" aria-label="Edit item" autocomplete="off">';
+  return '<textarea id="edit-input" class="edit-in" rows="1" maxlength="120" aria-label="Edit item" autocomplete="off" spellcheck="true">'+esc(i.text)+'</textarea>';
+}
+/* make the edit box exactly as tall as its text, so every line is visible (same as when it is not being edited) */
+function autoGrow(el){
+  el.style.height='auto';
+  var h=el.scrollHeight;
+  if(h>0)el.style.height=h+'px';
 }
 /* Save or cancel an edit. Enter and Escape redraw the page; tapping elsewhere (blur) swaps the box back in place so that tap still works. */
 function finishEdit(commit,redraw){
@@ -514,9 +586,7 @@ function pickHtml(pool){
 }
 function homeView(){
   var items=homeItems();
-  var doing=state.items.filter(function(i){return i.onHome&&i.status==='doing';}).length;
-  var done=state.items.filter(function(i){return i.onHome&&i.status==='done';}).length;
-  return '<header class="top"><h1 class="brand">Next Up</h1><p class="sub">'+doing+' in progress, '+done+' done</p></header>'+
+  return '<header class="top"><h1 class="brand">Next Up</h1><button type="button" class="winpill" data-action="wins" aria-label="Open your wins">WINS</button></header>'+
     pickHtml(items)+
     '<p class="hint">Tap a circle once to start, twice to finish.</p>'+
     (state.cats.length?'':'<p class="hint">Create a list on the Lists screen to get started.</p>')+sections(items,true);
@@ -567,7 +637,7 @@ function listView(){
     '<button type="button" class="dangerlink" data-action="removelist" data-cat="'+c.id+'">'+ICON.trash+'Remove this list</button></div>';
 }
 function navHtml(){
-  var cur=state.view==='home'?0:state.view==='vision'?2:1;
+  var cur=(state.view==='home'||state.view==='wins')?0:state.view==='vision'?2:1;
   var ih='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 6.5l2 2 3.5-4M3.5 15.5l2 2 3.5-4M13 7h8M13 16h8"/></svg>';
   var il='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01"/></svg>';
   var iv='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="1.6"/><path d="M21 16l-5-5-8 8"/></svg>';
@@ -578,9 +648,10 @@ function navHtml(){
 function render(){
   app.classList.toggle('wide',state.view==='lists');
   app.classList.toggle('boardwide',state.view==='home');
-  app.innerHTML=state.view==='home'?homeView():state.view==='lists'?listsView():state.view==='vision'?visionView():listView();
+  app.innerHTML=state.view==='home'?homeView():state.view==='lists'?listsView():state.view==='vision'?visionView():state.view==='wins'?winsView():listView();
   navEl.innerHTML=navHtml();
-  if(state.refocus){var el=document.getElementById(state.refocus);if(el){el.focus();if(el.type==='text'){try{var n=el.value.length;el.setSelectionRange(n,n);}catch(e){}}}state.refocus=null;}
+  if(state.popId){var pe=document.querySelector('.chk[data-id="'+state.popId+'"]');if(pe)pe.classList.add('pop');state.popId=null;}
+  if(state.refocus){var el=document.getElementById(state.refocus);if(el){el.focus();if(el.type==='text'||el.tagName==='TEXTAREA'){try{var n=el.value.length;el.setSelectionRange(n,n);}catch(e){}}if(el.classList.contains('edit-in')){autoGrow(el);requestAnimationFrame(function(){autoGrow(el);});}}state.refocus=null;}
 }
 
 /* ---------- Vision board: photos and videos, saved in the browser (IndexedDB) ---------- */
@@ -706,6 +777,44 @@ function tileHtml(m,i){
   }else inner='<img src="'+(m.turl||m.url)+'" alt="" loading="lazy">';
   return '<button type="button" class="vtile" data-action="openmedia" data-i="'+i+'" aria-label="Open '+(m.type==='video'?'video':'picture')+' '+(i+1)+' of '+state.media.length+(m.caption?': '+esc(m.caption):'')+'">'+inner+'</button>';
 }
+function winsView(){
+  var W=state.wins.slice().sort(function(a,b){return b.at-a.at;}),total=W.length;
+  var back='<button type="button" class="back" data-action="nav" data-view="home">'+ICON.back+'Home</button>';
+  if(!total)return '<div class="winspage">'+back+'<h1 class="wins-total">No wins yet</h1><p class="wins-sub">Finish something and it shows up here. Wins stay even after you clear them from your board.</p></div>';
+  var st=winStats(),next=MILESTONES.filter(function(m){return m>total;})[0];
+  var nextTxt=next?'Next milestone: '+next+' ('+(next-total)+' to go)':'You have passed every milestone';
+  var streak=st.cur>0
+    ?'<div class="wstat"><p>Days in a row</p><strong>'+st.cur+'</strong></div>'
+    :'<div class="wstat"><p>Best streak</p><strong>'+(st.best||'-')+'</strong></div>';
+  var ms=[1,10,25,50,100].map(function(n){return '<span class="ms'+(total>=n?' on':'')+'">'+(n===1?'First win':n)+'</span>';}).join('');
+  var by={};W.forEach(function(w){var o=by[w.cat]||(by[w.cat]={n:0,name:w.catName,cat:w.cat});o.n++;});
+  var arr=Object.keys(by).map(function(k){return by[k];}).sort(function(a,b){return b.n-a.n;}).slice(0,6),max=arr[0].n;
+  var bars=arr.map(function(o){
+    var c=byId[o.cat];
+    return '<li class="bylist"'+(c?' style="--h:'+c.h+'"':'')+'><span class="bn">'+esc(c?c.name:(o.name||'Removed list'))+'</span><span class="bbar"><b style="width:'+Math.round(o.n/max*100)+'%"></b></span><span class="bc">'+o.n+'</span></li>';
+  }).join('');
+  var today=dayStart(Date.now()),DAY=86400000,LIMIT=60;
+  var shown=state.winsMore?W:W.slice(0,LIMIT);
+  var groups=[{k:'Today',a:[]},{k:'Yesterday',a:[]},{k:'This week',a:[]},{k:'Earlier',a:[]}];
+  shown.forEach(function(w){
+    var diff=Math.round((today-dayStart(w.at))/DAY),gi=diff<=0?0:diff===1?1:diff<=6?2:3;
+    groups[gi].a.push({w:w,gi:gi});
+  });
+  var tl=groups.filter(function(g){return g.a.length;}).map(function(g){
+    var rows=g.a.map(function(x){
+      var w=x.w,d=new Date(w.at),c=byId[w.cat];
+      var when=x.gi<2?d.toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}):x.gi===2?d.toLocaleDateString([],{weekday:'short'}):d.toLocaleDateString([],{day:'numeric',month:'short'});
+      return '<li class="winrow"><span class="wchk" aria-hidden="true">'+ICON.done+'</span><div class="wmain"><span class="wtxt">'+esc(w.text)+'</span><span class="wmeta"><span class="wl"'+(c?' style="--h:'+c.h+'"':'')+'>'+esc(c?c.name:(w.catName||'Removed list'))+'</span> · '+when+'</span></div>'+
+        '<button type="button" class="x" data-action="removewin" data-id="'+w.id+'" aria-label="Remove this win: '+esc(w.text)+'">'+ICON.x+'</button></li>';
+    }).join('');
+    return '<section class="winsec" aria-label="'+g.k+'"><div class="sec-h"><h3>'+g.k+'</h3><span class="n">'+g.a.length+'</span></div><ul class="rows">'+rows+'</ul></section>';
+  }).join('');
+  var more=(!state.winsMore&&W.length>LIMIT)?'<button type="button" class="pbtn" style="margin-top:16px" data-action="morewins">Show older wins</button>':'';
+  return '<div class="winspage">'+back+'<h1 class="wins-total">'+total+(total===1?' thing done':' things done')+'</h1><p class="wins-sub">'+nextTxt+'</p>'+
+    '<div class="wstats"><div class="wstat"><p>Last 7 days</p><strong>'+st.week+'</strong></div>'+streak+'</div>'+
+    '<div class="mstones" aria-label="Milestones">'+ms+'</div>'+
+    '<div class="sec-h"><h3>Wins by list</h3></div><ul class="rows bylists">'+bars+'</ul>'+tl+more+'</div>';
+}
 function visionView(){
   var n=state.media.length,body;
   if(!state.mediaReady)body='<p class="empty">Loading your pictures...</p>';
@@ -770,6 +879,9 @@ document.addEventListener('click',function(e){
   else if(a==='undo'){undoRemove();}
   else if(a==='shuffle'){shuffle();}
   else if(a==='edit'){state.editId=id;state.refocus='edit-input';}
+  else if(a==='wins'){state.view='wins';state.cat=null;window.scrollTo(0,0);}
+  else if(a==='removewin'){removeWin(id);}
+  else if(a==='morewins'){state.winsMore=true;}
   else if(a==='ideas'){state.view='list';state.cat=t.getAttribute('data-cat');state.ideasOpen=true;state.editing=false;window.scrollTo(0,0);}
   else if(a==='toggleideas'){state.ideasOpen=!state.ideasOpen;}
   else if(a==='moreideas'){state.ideaPage[state.cat]=(state.ideaPage[state.cat]||0)+1;}
@@ -956,6 +1068,13 @@ document.addEventListener('contextmenu',function(e){if(drag)e.preventDefault();}
 /* a drag must not also count as a tap that opens the list */
 document.addEventListener('click',function(e){if(Date.now()<suppressUntil){e.stopPropagation();e.preventDefault();}},true);
 
+document.addEventListener('input',function(e){
+  var t=e.target;
+  if(!t||!t.classList||!t.classList.contains('edit-in'))return;
+  if(/[\r\n]/.test(t.value))t.value=t.value.replace(/\s*[\r\n]+\s*/g,' ');   /* one item = one line of thought: no hard line breaks */
+  autoGrow(t);
+});
+window.addEventListener('resize',function(){var el=document.getElementById('edit-input');if(el)autoGrow(el);});
 document.addEventListener('focusout',function(e){
   var t=e.target;
   if(t&&t.classList&&t.classList.contains('edit-in'))finishEdit(true,false);

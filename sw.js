@@ -1,6 +1,6 @@
 // Next Up service worker: makes the app open offline.
 // Bump CACHE_VERSION whenever you change any file so users get the update.
-const CACHE_VERSION = 'nextup-pwa-v8';
+const CACHE_VERSION = 'nextup-pwa-v9';
 const SHELL = [
   './',
   'index.html',
