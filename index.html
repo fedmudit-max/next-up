@@ -87,6 +87,10 @@ button.txt{background:none;border:0;padding:0;margin:0;text-align:left;width:100
 .x{flex:none;width:40px;height:40px;border:0;background:transparent;color:var(--muted);border-radius:50%;cursor:pointer;display:grid;place-items:center;opacity:.75}
 .x:hover,.x:focus-visible{opacity:1;color:var(--ink)}
 .bcol .pbtn{margin-top:12px}
+.rmeta{display:flex;flex-wrap:wrap;gap:2px 12px;margin-top:2px}
+.rmeta .onhome{margin:0}
+.tlabel{font-size:12px;font-weight:600;color:var(--muted)}
+.ct{color:var(--muted);font-weight:500}
 .onhome{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-top:2px}
 .onhome::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 1px color-mix(in srgb,var(--ink) 35%,transparent);margin-right:6px;vertical-align:middle}
 .row[data-status="done"] .txt{color:var(--muted);text-decoration:line-through;text-decoration-thickness:1px}
@@ -137,7 +141,7 @@ button.txt{background:none;border:0;padding:0;margin:0;text-align:left;width:100
 body.dragging,body.dragging *{cursor:grabbing!important;-webkit-user-select:none;user-select:none}
 
 /* Create and remove lists */
-.ltools{display:flex;gap:8px;margin:0 0 22px}
+.ltools{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 16px}
 .pbtn{border:0;border-radius:999px;padding:10px 18px;min-height:42px;font-weight:600;font-size:15px;cursor:pointer;background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--line)}
 .pbtn.prim{background:var(--accent);color:var(--navy);box-shadow:none}
 .pbtn[aria-pressed="true"]{background:var(--ink);color:var(--bg);box-shadow:none}
@@ -196,6 +200,27 @@ body.dragging,body.dragging *{cursor:grabbing!important;-webkit-user-select:none
   .bcol .empty{font-size:13px;padding:10px 0}
   .bcol .pbtn{padding:8px 12px;min-height:36px;font-size:13px}
 }
+
+/* Tagging and time filter */
+.tcount{display:inline-block;background:var(--accent);color:var(--navy);border-radius:999px;padding:1px 8px;margin-left:8px;font-size:12px;font-weight:700}
+.tchips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
+.tchip{border:1px solid var(--line);background:transparent;border-radius:999px;padding:8px 16px;font-size:14px;font-weight:600;min-height:40px;cursor:pointer}
+.tchip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tnote{margin:0 0 16px}
+.linkbtn{border:0;background:none;padding:0;font:inherit;font-weight:600;color:var(--ink);text-decoration:underline;cursor:pointer}
+.tagpanel{background:color-mix(in srgb,hsl(var(--h) var(--cs) var(--cl)) 10%,transparent);border-radius:16px;padding:16px;margin:0 0 8px}
+.tag-left{margin:0;font-size:13px;font-weight:600;color:var(--muted)}
+.tag-text{font-family:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;font-weight:800;font-size:clamp(22px,5.5vw,32px);line-height:1.15;letter-spacing:-.02em;margin:6px 0 4px;overflow-wrap:anywhere}
+.tag-from{margin:0 0 16px;font-size:14px;font-weight:600;color:hsl(var(--h) var(--cs) var(--cl))}
+.tag-btns{display:flex;gap:8px;margin-bottom:12px}
+.tbtn{flex:1;min-height:56px;border:2px solid var(--ink);background:transparent;border-radius:14px;font-weight:700;font-size:16px;cursor:pointer}
+.tbtn:hover,.tbtn:focus-visible{background:var(--accent);color:var(--navy);border-color:var(--accent)}
+.tagrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;border-bottom:1px solid var(--line);padding:10px 0}
+.tmain{flex:1 1 200px;min-width:0}
+.wtxt.fin{color:var(--muted);text-decoration:line-through}
+.tseg{display:inline-flex;border:1.5px solid var(--line);border-radius:999px;overflow:hidden}
+.tseg button{border:0;background:transparent;padding:7px 14px;min-height:38px;font-weight:600;font-size:13px;cursor:pointer}
+.tseg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
 
 /* Wins */
 .winpill{display:inline-flex;align-items:center;gap:7px;border:0;background:var(--accent);color:var(--navy);border-radius:999px;padding:8px 16px;font-weight:700;font-size:13px;letter-spacing:.08em;cursor:pointer;min-height:40px}
@@ -349,7 +374,7 @@ function load(){
 function save(){try{localStorage.setItem(KEY,JSON.stringify({items:state.items,seeded:state.seeded,cats:state.cats,wins:state.wins}));}catch(e){}}
 function seedItem(c){return {id:uid(),cat:c.id,text:c.common,status:'todo',onHome:NOT_ON_HOME.indexOf(c.id)<0};}
 
-var state={view:'home',cat:null,lastCat:null,pickId:null,flash:false,refocus:null,undo:null,editing:false,creating:false,ideasOpen:false,ideaPage:{},media:[],mediaReady:false,persist:true,busy:0,viewer:null,refocusTile:null,editId:null,wins:[],winsMore:false,popId:null,cats:[],items:[],seeded:[]};
+var state={view:'home',cat:null,lastCat:null,pickId:null,flash:false,refocus:null,undo:null,editing:false,creating:false,ideasOpen:false,ideaPage:{},media:[],mediaReady:false,persist:true,busy:0,viewer:null,refocusTile:null,editId:null,wins:[],winsMore:false,popId:null,timeFilter:'all',tagSkipped:[],cats:[],items:[],seeded:[]};
 (function(){
   var saved=load();
   if(saved){
@@ -543,11 +568,12 @@ function finishEdit(commit,redraw){
     inp.outerHTML=txtHtml(it);
   }
 }
+function timeLabel(t){return t==='10'?'10 min':t==='30'?'30 min':t==='60'?'60+ min':'';}
 function row(i,showCat){
   var c=byId[i.cat];
   return '<li class="row" data-status="'+i.status+'" style="--h:'+c.h+'">'+
     '<button type="button" class="chk" data-action="cycle" data-id="'+i.id+'" aria-label="'+(i.onHome||i.status!=='todo'?ACTION[i.status]:'Add to Home')+': '+esc(i.text)+'">'+ICON[i.status]+'</button>'+
-    '<div class="rt">'+(state.editId===i.id?editHtml(i):txtHtml(i))+(showCat?'<span class="cat"><i></i>'+esc(c.name)+'</span>':'')+(!showCat&&i.onHome&&i.status==='todo'?'<span class="onhome">On Home</span>':'')+'</div>'+
+    '<div class="rt">'+(state.editId===i.id?editHtml(i):txtHtml(i))+(showCat?'<span class="cat"><i></i>'+esc(c.name)+(i.time?'<span class="ct"> · '+timeLabel(i.time)+'</span>':'')+'</span>':'')+((!showCat&&((i.onHome&&i.status==='todo')||i.time))?'<div class="rmeta">'+(i.onHome&&i.status==='todo'?'<span class="onhome">On Home</span>':'')+(i.time?'<span class="tlabel">'+timeLabel(i.time)+'</span>':'')+'</div>':'')+'</div>'+
     '<button type="button" class="x" data-action="remove" data-id="'+i.id+'" aria-label="Delete: '+esc(i.text)+'">'+ICON.x+'</button></li>';
 }
 function phRow(c,k){
@@ -556,10 +582,12 @@ function phRow(c,k){
     '<button type="button" class="padd" data-action="add">Add</button></div></li>';
 }
 /* filled items, then empty placeholder lines up to five (always at least one to type into) */
-function listBody(c,items){
+function listBody(c,items,bare){
   var html=items.map(function(i){return row(i,false);}).join('');
-  var n=Math.max(1,LINES-items.length);
-  for(var k=0;k<n;k++)html+=phRow(c,k);
+  if(!bare){
+    var n=Math.max(1,LINES-items.length);
+    for(var k=0;k<n;k++)html+=phRow(c,k);
+  }
   return '<ul class="rows">'+html+'</ul>';
 }
 function sections(items,showCat){
@@ -610,22 +638,36 @@ function ideasHtml(c){
   var more=av.length>IDEA_BATCH?'<button type="button" class="pbtn" data-action="moreideas">Show different ideas</button>':'';
   return bar+'<section class="ideas" aria-label="Ideas for '+esc(c.name)+'"><div class="ideas-h"><h2>Ideas for '+esc(c.name)+'</h2>'+more+'</div>'+body+'</section>';
 }
+function untaggedCount(){return state.items.filter(function(i){return !i.time&&i.status!=='done';}).length;}
 function listsView(){
+  var f=state.timeFilter,filtered=f!=='all',shown=0;
   var blocks=state.cats.map(function(c){
-    var its=state.items.filter(function(i){return i.cat===c.id;});
+    var its=state.items.filter(function(i){return i.cat===c.id&&(!filtered||i.time===f);});
+    if(filtered&&!its.length)return '';
+    shown+=its.length;
     var done=its.filter(function(i){return i.status==='done';}).length;
     var bulb=IDEAS[c.id]?'<button type="button" class="idea-btn" data-action="ideas" data-cat="'+c.id+'" aria-label="Get ideas for '+esc(c.name)+'">'+ICON.bulb+'</button>':'';
     var rm=state.editing?'<button type="button" class="rm-list" data-action="removelist" data-cat="'+c.id+'" aria-label="Remove list '+esc(c.name)+'">'+ICON.trash+'</button>':'';
     return '<section class="lblock" data-cat="'+c.id+'" style="--h:'+c.h+'" aria-label="'+esc(c.name)+'">'+
       '<div class="lhead-row"><button type="button" class="lhead" data-action="open" data-cat="'+c.id+'" aria-label="Open '+esc(c.name)+'" title="Open. Drag to reorder." aria-keyshortcuts="Alt+ArrowUp Alt+ArrowDown"><span class="ldot"></span><span class="lname">'+esc(c.name)+'</span><span class="lcount">'+done+'/'+its.length+'</span>'+ICON.chev+'</button>'+bulb+rm+'</div>'+
-      listBody(c,its)+'</section>';
+      listBody(c,its,filtered)+'</section>';
   }).join('');
   var creator=state.creating?'<div class="newlist"><label class="sr" for="new-list-name">List name</label><input id="new-list-name" type="text" placeholder="Name your list, e.g. Recipes to try" maxlength="40" autocomplete="off"><button type="button" class="pbtn prim" data-action="createlist">Create</button><button type="button" class="pbtn" data-action="cancelcreate">Cancel</button></div>':'';
   var sub=state.editing?'Tap the bin to remove a list':state.cats.length+' lists. Tap a circle to add an item to Home';
+  var n=untaggedCount();
+  var tagBtn='<button type="button" class="pbtn" data-action="tagging"'+(n?' aria-label="Tagging, '+n+(n===1?' item':' items')+' to sort"':'')+'>Tagging'+(n?'<span class="tcount">'+n+'</span>':'')+'</button>';
+  var opts=[['all','All'],['10','10 min'],['30','30 min'],['60','60+ min']];
+  var chips='<div class="tchips" role="group" aria-label="Show items by time">'+opts.map(function(o){var on=f===o[0];return '<button type="button" class="tchip'+(on?' on':'')+'" data-action="timefilter" data-f="'+o[0]+'" aria-pressed="'+on+'">'+o[1]+'</button>';}).join('')+'</div>';
+  var note='';
+  if(filtered&&n)note='<p class="hint tnote">'+n+(n===1?' item has':' items have')+' no tag yet. <button type="button" class="linkbtn" data-action="tagging">Open Tagging</button></p>';
+  var body;
+  if(!state.cats.length)body='<p class="empty">No lists yet. Tap New list to create one.</p>';
+  else if(filtered&&!shown)body='<p class="empty">Nothing is tagged '+timeLabel(f)+' yet.</p><button type="button" class="pbtn" data-action="tagging">Open Tagging</button>';
+  else body='<div class="lgrid'+(state.editing?' editing':'')+'">'+blocks+'</div>';
   return '<header class="top"><h1 class="brand">All lists</h1><p class="sub">'+sub+'</p></header>'+
-    '<div class="ltools"><button type="button" class="pbtn prim" data-action="newlist">New list</button><button type="button" class="pbtn" data-action="editlists" aria-pressed="'+state.editing+'">'+(state.editing?'Done':'Edit')+'</button></div>'+'<p class="hint dragtip">Drag a list name to move it. On a phone, press and hold first.</p>'+
-    creator+
-    (state.cats.length?'<div class="lgrid'+(state.editing?' editing':'')+'">'+blocks+'</div>':'<p class="empty">No lists yet. Tap New list to create one.</p>');
+    '<div class="ltools"><button type="button" class="pbtn prim" data-action="newlist">New list</button><button type="button" class="pbtn" data-action="editlists" aria-pressed="'+state.editing+'">'+(state.editing?'Done':'Edit')+'</button>'+tagBtn+'</div>'+
+    chips+note+(filtered?'':'<p class="hint dragtip">Drag a list name to move it. On a phone, press and hold first.</p>')+
+    creator+body;
 }
 function listView(){
   var c=byId[state.cat];
@@ -648,7 +690,7 @@ function navHtml(){
 function render(){
   app.classList.toggle('wide',state.view==='lists');
   app.classList.toggle('boardwide',state.view==='home');
-  app.innerHTML=state.view==='home'?homeView():state.view==='lists'?listsView():state.view==='vision'?visionView():state.view==='wins'?winsView():listView();
+  app.innerHTML=state.view==='home'?homeView():state.view==='lists'?listsView():state.view==='vision'?visionView():state.view==='wins'?winsView():state.view==='tagging'?taggingView():listView();
   navEl.innerHTML=navHtml();
   if(state.popId){var pe=document.querySelector('.chk[data-id="'+state.popId+'"]');if(pe)pe.classList.add('pop');state.popId=null;}
   if(state.refocus){var el=document.getElementById(state.refocus);if(el){el.focus();if(el.type==='text'||el.tagName==='TEXTAREA'){try{var n=el.value.length;el.setSelectionRange(n,n);}catch(e){}}if(el.classList.contains('edit-in')){autoGrow(el);requestAnimationFrame(function(){autoGrow(el);});}}state.refocus=null;}
@@ -777,6 +819,33 @@ function tileHtml(m,i){
   }else inner='<img src="'+(m.turl||m.url)+'" alt="" loading="lazy">';
   return '<button type="button" class="vtile" data-action="openmedia" data-i="'+i+'" aria-label="Open '+(m.type==='video'?'video':'picture')+' '+(i+1)+' of '+state.media.length+(m.caption?': '+esc(m.caption):'')+'">'+inner+'</button>';
 }
+function taggingView(){
+  var order={};state.cats.forEach(function(c,i){order[c.id]=i;});
+  var byOrder=function(a,b){return order[a.cat]-order[b.cat];};
+  var open=state.items.filter(function(i){return !i.time&&i.status!=='done';}).sort(byOrder);
+  var q=open.filter(function(i){return state.tagSkipped.indexOf(i.id)<0;}).concat(open.filter(function(i){return state.tagSkipped.indexOf(i.id)>=0;}));
+  var back='<button type="button" class="back" data-action="nav" data-view="lists">'+ICON.back+'Lists</button>';
+  var panel;
+  if(!q.length){
+    panel='<p class="empty">Everything is sorted. New items you add will show up here.</p>';
+  }else{
+    var it=q[0],c=byId[it.cat];
+    panel='<section class="tagpanel" style="--h:'+c.h+'" aria-label="Item to sort"><p class="tag-left">'+q.length+(q.length===1?' item':' items')+' left to sort</p>'+
+      '<p class="tag-text">'+esc(it.text)+'</p><p class="tag-from">'+esc(c.name)+'</p>'+
+      '<div class="tag-btns"><button type="button" id="tag-first" class="tbtn" data-action="tag" data-id="'+it.id+'" data-t="10">10 min</button><button type="button" class="tbtn" data-action="tag" data-id="'+it.id+'" data-t="30">30 min</button><button type="button" class="tbtn" data-action="tag" data-id="'+it.id+'" data-t="60">60+ min</button></div>'+
+      (q.length>1?'<button type="button" class="linkbtn" data-action="tagskip" data-id="'+it.id+'">Skip for now</button>':'')+'</section>';
+  }
+  var groups=['10','30','60'].map(function(t){
+    var list=state.items.filter(function(i){return i.time===t;}).sort(byOrder);
+    var rows=list.length?'<ul class="rows">'+list.map(function(i){
+      var c=byId[i.cat];
+      var seg=['10','30','60'].map(function(v){var on=i.time===v;return '<button type="button" data-action="tag" data-id="'+i.id+'" data-t="'+(on?'':v)+'" aria-pressed="'+on+'" aria-label="'+(on?'Remove the '+timeLabel(v)+' tag':'Tag as '+timeLabel(v))+': '+esc(i.text)+'">'+(v==='60'?'60+':v)+'</button>';}).join('');
+      return '<li class="tagrow" style="--h:'+c.h+'"><div class="tmain"><span class="wtxt'+(i.status==='done'?' fin':'')+'">'+esc(i.text)+'</span><span class="wmeta"><span class="wl">'+esc(c.name)+'</span></span></div><div class="tseg" role="group" aria-label="Time for this item">'+seg+'</div></li>';
+    }).join('')+'</ul>':'<p class="empty">Nothing tagged '+timeLabel(t)+' yet.</p>';
+    return '<section class="winsec" aria-label="'+timeLabel(t)+'"><div class="sec-h"><h3>'+timeLabel(t)+'</h3><span class="n">'+list.length+'</span></div>'+rows+'</section>';
+  }).join('');
+  return '<div class="tagpage">'+back+'<h1 class="wins-total">Tagging</h1><p class="wins-sub">Sort your items by how long they take. Then pick a time on the Lists screen to see only what fits.</p>'+panel+groups+'</div>';
+}
 function winsView(){
   var W=state.wins.slice().sort(function(a,b){return b.at-a.at;}),total=W.length;
   var back='<button type="button" class="back" data-action="nav" data-view="home">'+ICON.back+'Home</button>';
@@ -865,7 +934,7 @@ document.addEventListener('click',function(e){
   if(a==='vdelete'){if(state.media[state.viewer])removeMedia(state.media[state.viewer].id);return;}
   if(a==='add'){submitAdd(t.closest('.phf'));return;}
   if(a==='createlist'){doCreate();return;}
-  if(a==='nav'){state.view=t.getAttribute('data-view');state.cat=null;state.editing=false;state.creating=false;state.ideasOpen=false;window.scrollTo(0,0);}
+  if(a==='nav'){state.view=t.getAttribute('data-view');state.cat=null;state.editing=false;state.creating=false;state.ideasOpen=false;state.tagSkipped=[];window.scrollTo(0,0);}
   else if(a==='open'){state.view='list';state.cat=t.getAttribute('data-cat');state.ideasOpen=false;window.scrollTo(0,0);}
   else if(a==='cycle'){
     var it=state.items.find(function(i){return i.id===id;});
@@ -879,6 +948,13 @@ document.addEventListener('click',function(e){
   else if(a==='undo'){undoRemove();}
   else if(a==='shuffle'){shuffle();}
   else if(a==='edit'){state.editId=id;state.refocus='edit-input';}
+  else if(a==='tagging'){state.view='tagging';state.cat=null;window.scrollTo(0,0);}
+  else if(a==='timefilter'){state.timeFilter=t.getAttribute('data-f');}
+  else if(a==='tag'){
+    var ti=state.items.find(function(x){return x.id===id;});
+    if(ti){var v=t.getAttribute('data-t');if(v)ti.time=v;else delete ti.time;save();if(t.classList.contains('tbtn'))state.refocus='tag-first';}
+  }
+  else if(a==='tagskip'){state.tagSkipped.push(id);state.refocus='tag-first';}
   else if(a==='wins'){state.view='wins';state.cat=null;window.scrollTo(0,0);}
   else if(a==='removewin'){removeWin(id);}
   else if(a==='morewins'){state.winsMore=true;}
@@ -1042,7 +1118,7 @@ function endDrag(commit){
   }else finish();
 }
 document.addEventListener('pointerdown',function(e){
-  if(state.view!=='lists'||drag)return;
+  if(state.view!=='lists'||drag||state.timeFilter!=='all')return;   /* no reordering while a time filter hides some lists */
   if(e.pointerType==='mouse'&&e.button!==0)return;
   var h=e.target.closest&&e.target.closest('.lhead'),blk=h&&h.closest('.lblock');
   if(!h||!blk)return;
