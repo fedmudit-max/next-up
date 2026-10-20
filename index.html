@@ -441,9 +441,9 @@ function setStatus(id,to){
     state.wins.push({id:uid(),itemId:it.id,text:it.text,cat:it.cat,catName:byId[it.cat]?byId[it.cat].name:'',at:Date.now()});
     msg=winMessage(state.wins.length);ms=WIN_TEXT[state.wins.length]?3400:2400;state.popId=it.id;
   }else if(was==='done'){
-    var before=state.wins.length;
-    state.wins=state.wins.filter(function(w){return w.itemId!==it.id;});
-    if(state.wins.length<before)msg='Back to '+LABEL[to]+'. That win was taken back.';
+    var li=-1;
+    state.wins.forEach(function(w,k){if(w.itemId===it.id)li=k;});
+    if(li>=0){state.wins.splice(li,1);msg='Back to '+LABEL[to]+'. That win was taken back.';}
   }
   save();toast(msg,false,ms);
 }
@@ -476,6 +476,16 @@ function addItem(cat,text,onHome){
   state.items.push({id:uid(),cat:cat,text:text,status:'todo',onHome:!!onHome});
   state.lastCat=cat;save();toast(onHome?'Added to To do':'Added to the list');
 }
+/* Home: take an item off the board. It stays on its list, ready to be queued again. A win already earned is kept. */
+function removeFromHome(id){
+  var it=state.items.find(function(x){return x.id===id;});
+  if(!it)return;
+  state.undo={type:'unhome',id:id,status:it.status,onHome:it.onHome};
+  var wasDone=it.status==='done';
+  it.status='todo';it.onHome=false;
+  if(state.pickId===id)state.pickId=null;
+  save();toast(wasDone?'Back in its list. Your win is kept.':'Back in its list.',true);
+}
 function removeItem(id){
   var idx=state.items.findIndex(function(i){return i.id===id;});
   if(idx<0)return;
@@ -500,6 +510,11 @@ function removeList(id){
 }
 function undoRemove(){
   var u=state.undo;if(!u)return;
+  if(u.type==='unhome'){
+    var back=state.items.find(function(x){return x.id===u.id;});
+    if(back){back.status=u.status;back.onHome=u.onHome;}
+    state.undo=null;save();toast('Restored');return;
+  }
   if(u.type==='win'){state.wins.splice(Math.min(u.idx,state.wins.length),0,u.w);state.undo=null;save();toast('Restored');return;}
   if(u.type==='media'){
     state.media.splice(Math.min(u.idx,state.media.length),0,u.m);
@@ -574,7 +589,7 @@ function row(i,showCat){
   return '<li class="row" data-status="'+i.status+'" style="--h:'+c.h+'">'+
     '<button type="button" class="chk" data-action="cycle" data-id="'+i.id+'" aria-label="'+(i.onHome||i.status!=='todo'?ACTION[i.status]:'Add to Home')+': '+esc(i.text)+'">'+ICON[i.status]+'</button>'+
     '<div class="rt">'+(state.editId===i.id?editHtml(i):txtHtml(i))+(showCat?'<span class="cat"><i></i>'+esc(c.name)+(i.time?'<span class="ct"> · '+timeLabel(i.time)+'</span>':'')+'</span>':'')+((!showCat&&((i.onHome&&i.status==='todo')||i.time))?'<div class="rmeta">'+(i.onHome&&i.status==='todo'?'<span class="onhome">On Home</span>':'')+(i.time?'<span class="tlabel">'+timeLabel(i.time)+'</span>':'')+'</div>':'')+'</div>'+
-    '<button type="button" class="x" data-action="remove" data-id="'+i.id+'" aria-label="Delete: '+esc(i.text)+'">'+ICON.x+'</button></li>';
+    '<button type="button" class="x" data-action="'+(showCat?'unhome':'remove')+'" data-id="'+i.id+'" aria-label="'+(showCat?'Remove from Home':'Delete')+': '+esc(i.text)+'">'+ICON.x+'</button></li>';
 }
 function phRow(c,k){
   return '<li class="row ph"><div class="phf" data-fixed="'+c.id+'"><span class="pc" aria-hidden="true">'+ICON.todo+'</span>'+
@@ -955,6 +970,7 @@ document.addEventListener('click',function(e){
     if(ti){var v=t.getAttribute('data-t');if(v)ti.time=v;else delete ti.time;save();if(t.classList.contains('tbtn'))state.refocus='tag-first';}
   }
   else if(a==='tagskip'){state.tagSkipped.push(id);state.refocus='tag-first';}
+  else if(a==='unhome'){removeFromHome(id);}
   else if(a==='wins'){state.view='wins';state.cat=null;window.scrollTo(0,0);}
   else if(a==='removewin'){removeWin(id);}
   else if(a==='morewins'){state.winsMore=true;}
